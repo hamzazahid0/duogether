@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "692109571959",
+    "project_id": "duogether-212c2",
+    "storage_bucket": "duogether-212c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692109571959:android:b6d3434cc09eb8c5db1372",
+        "android_client_info": {
+          "package_name": "com.cheavbella.duogether"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "692109571959-icql71ctc4j27r5mg96b356gv7gqucga.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cheavbella.duogether",
+            "certificate_hash": "68f34803620618b6ad3ca501206611412c6727d6"
+          }
+        },
+        {
+          "client_id": "692109571959-j3dq1hdtpe7d340pn7j279ek97ipoqg8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cheavbella.duogether",
+            "certificate_hash": "42c353132d3c8ea038c97112a131ecbaac519109"
+          }
+        },
+        {
+          "client_id": "692109571959-1dib1sdnaupshr1ec5dh0f0qo8ls8v8n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE736nmMyMfRP8aBRqdMPcq_Dt_nGFOfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "692109571959-1dib1sdnaupshr1ec5dh0f0qo8ls8v8n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-8530982536310986~5862284621"
+    }
+  ],
+  "configuration_version": "1"
+}

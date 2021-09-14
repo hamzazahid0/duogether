@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">DuoGether</string>
+  <string name="facebook_app_id">834506160512347</string>
+  <string name="fb_login_protocol_scheme">fb834506160512347</string>
+</resources>

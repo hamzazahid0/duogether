@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>692109571959-s5g01cdes8d9ra4c9001mc4s40meeoms.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.692109571959-s5g01cdes8d9ra4c9001mc4s40meeoms</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>692109571959-icql71ctc4j27r5mg96b356gv7gqucga.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDlG8poSrp7U0ZaMoRICRln5JlS5HUVXm0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>692109571959</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.cheavbella.duogether</string>
+	<key>PROJECT_ID</key>
+	<string>duogether-212c2</string>
+	<key>STORAGE_BUCKET</key>
+	<string>duogether-212c2.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:692109571959:ios:7115b4441e6d85cddb1372</string>
+</dict>
+</plist>
