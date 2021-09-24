@@ -101,6 +101,8 @@ class _LoginEmailState extends State<LoginEmail> {
                                 Get.snackbar('Şifre yok', 'Lütfen şifre girin');
                                 return;
                               }
+                             
+
                               firebaseApi.loginWithEmail(email.text, pass.text);
                             },
                             child: Padding(

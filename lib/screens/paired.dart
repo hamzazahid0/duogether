@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:confetti/confetti.dart';
 
-class Paired extends StatefulWidget {
+class Paired extends StatelessWidget {
   final String name;
   final int age;
   final String id;
@@ -15,7 +15,7 @@ class Paired extends StatefulWidget {
   final String avatar;
   final bool avatarIsAsset;
 
-  const Paired(
+  Paired(
       {Key? key,
       required this.name,
       required this.age,
@@ -24,12 +24,6 @@ class Paired extends StatefulWidget {
       required this.avatarIsAsset,
       required this.pairId})
       : super(key: key);
-
-  @override
-  _PairedState createState() => _PairedState();
-}
-
-class _PairedState extends State<Paired> {
   ConfettiController l = ConfettiController(duration: Duration(seconds: 1));
   ConfettiController r = ConfettiController(duration: Duration(seconds: 1));
   @override
@@ -94,23 +88,22 @@ class _PairedState extends State<Paired> {
                         ),
                         Column(
                           children: [
-                            widget.avatarIsAsset
+                            avatarIsAsset
                                 ? CircleAvatar(
                                     radius: 40,
                                     backgroundColor: Colors.transparent,
-                                    backgroundImage: AssetImage(widget.avatar),
+                                    backgroundImage: AssetImage(avatar),
                                   )
                                 : CircleAvatar(
                                     radius: 40,
                                     backgroundColor: Colors.transparent,
-                                    backgroundImage:
-                                        NetworkImage(widget.avatar),
+                                    backgroundImage: NetworkImage(avatar),
                                   ),
                             SizedBox(
                               height: 10,
                             ),
                             Text(
-                              '${widget.name}, ${widget.age}',
+                              '$name, $age',
                               style: GoogleFonts.roboto(
                                   color: Colors.white, fontSize: 18),
                             )
@@ -134,15 +127,15 @@ class _PairedState extends State<Paired> {
                         onTap: () async {
                           // await firebaseApi.firestore
                           //     .collection('Pairs')
-                          //     .doc(widget.pairId)
+                          //     .doc(pairId)
                           //     .update({'hasMessage': true});
                           Get.off(
                               () => Message(
-                                    avatar: widget.avatar,
-                                    avatarIsAsset: widget.avatarIsAsset,
-                                    name: widget.name,
-                                    pairId: widget.pairId,
-                                    id: widget.id,
+                                    avatar: avatar,
+                                    avatarIsAsset: avatarIsAsset,
+                                    name: name,
+                                    pairId: pairId,
+                                    id: id,
                                   ),
                               transition: Transition.cupertino);
                         },
@@ -150,7 +143,7 @@ class _PairedState extends State<Paired> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 40),
                           child: Text(
-                            "${widget.name} kişisine yaz",
+                            "$name kişisine yaz",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.roboto(

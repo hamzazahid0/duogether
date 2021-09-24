@@ -45,6 +45,13 @@
             {
               "client_id": "692109571959-1dib1sdnaupshr1ec5dh0f0qo8ls8v8n.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "692109571959-6bn5gb4uklejtila1ar0hb8rippupcij.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cheavbella.duogethe"
+              }
             }
           ]
         }

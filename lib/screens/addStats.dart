@@ -13,14 +13,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
-class AddStats extends StatefulWidget {
-  const AddStats({Key? key}) : super(key: key);
-
-  @override
-  _AddStatsState createState() => _AddStatsState();
-}
-
-class _AddStatsState extends State<AddStats> {
+class AddStats extends StatelessWidget {
   FirebaseApi firebaseApi = Get.find();
   AddStatsGetx addStatsGetx = Get.put(AddStatsGetx());
   TextEditingController controller = TextEditingController();
@@ -28,7 +21,7 @@ class _AddStatsState extends State<AddStats> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
+      backgroundColor: Get.isDarkMode ? Colors.black : Colors.white,
       body: SafeArea(
         child: Stack(
           fit: StackFit.expand,
@@ -67,22 +60,6 @@ class _AddStatsState extends State<AddStats> {
                       physics: BouncingScrollPhysics(),
                       child: Column(
                         children: [
-                          // SizedBox(
-                          //   height: 600,
-                          //   width: double.maxFinite,
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.only(bottom: 10,left: 5,right: 5,top: 80),
-                          //     child: Material(
-                          //                     borderRadius: BorderRadius.circular(20),
-                          //                     elevation: 12,
-                          //                     child: ClipRRect(
-                          //                       borderRadius:
-                          //                           BorderRadius.circular(20),
-                          //                       child: Image.network(
-                          //                           addStatsGetx.image.value,fit: BoxFit.cover,),
-                          //                     )),
-                          //   ),
-                          // ),
                           SizedBox(
                             height: 80,
                           ),
@@ -113,44 +90,10 @@ class _AddStatsState extends State<AddStats> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        // Material(
-                                        //     borderRadius: BorderRadius.circular(20),
-                                        //     elevation: 12,
-                                        //     child: ClipRRect(
-                                        //       borderRadius:
-                                        //           BorderRadius.circular(20),
-                                        //       child: Image.network(
-                                        //           addStatsGetx.image.value),
-                                        //     )),
                                         Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            // SleekCircularSlider(
-                                            //   min: 0,
-                                            //   max: 5,
-                                            //   innerWidget: (data) => Center(
-                                            //       child: Text(
-                                            //           '${addStatsGetx.stage.value}',
-                                            //           style: GoogleFonts.economica(
-                                            //               fontSize: 22))),
-                                            //   appearance: CircularSliderAppearance(
-                                            //       spinnerMode: false,
-                                            //       startAngle: 170,
-                                            //       angleRange: 200,
-                                            //       customColors: CustomSliderColors(
-                                            //           dynamicGradient: false,
-                                            //           progressBarColors: [
-                                            //             Color(0xFFFF0080),
-                                            //             Color(0xFFFF8C00),
-                                            //             Color(0xFF40E0D0)
-                                            //           ])),
-                                            //   initialValue: addStatsGetx.exp.value,
-                                            //   onChange: (data) {
-                                            //     addStatsGetx.exp.value = data;
-                                            //     addStatsGetx.setStage();
-                                            //   },
-                                            // ),
                                             SizedBox(
                                               height: 10,
                                               width: MediaQuery.of(context)
@@ -267,10 +210,10 @@ class _AddStatsState extends State<AddStats> {
                                 locale: LocaleType.tr,
                                 theme: DatePickerTheme(
                                     containerHeight: 300,
-                                    headerColor: context.isDarkMode
+                                    headerColor: Get.isDarkMode
                                         ? Colors.black
                                         : Colors.white,
-                                    backgroundColor: context.isDarkMode
+                                    backgroundColor: Get.isDarkMode
                                         ? Colors.grey[900]!
                                         : Colors.grey[200]!,
                                     itemStyle: TextStyle(
@@ -802,7 +745,7 @@ class _AddStatsState extends State<AddStats> {
                                   .getGameTime(addStatsGetx.dateTime.value),
                               'info': controller.text.toString()
                             });
-                            firebaseApi.firestore
+                         /*   firebaseApi.firestore
                                 .collection('Users')
                                 .doc(firebaseApi.auth.currentUser!.uid)
                                 .collection('Rosettes')
@@ -855,7 +798,7 @@ class _AddStatsState extends State<AddStats> {
                                   }
                                 });
                               }
-                            });
+                            });*/
                           },
                     borderRadius: BorderRadius.circular(15),
                     child: Padding(

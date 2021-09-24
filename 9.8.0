@@ -1,0 +1,12 @@
+
+> protobufjs@6.11.2 postinstall D:\MYFLUTTERPROJECTS\duogether\node_modules\protobufjs
+> node scripts/postinstall
+
++ firebase-admin@9.11.1
+added 160 packages from 88 contributors and audited 271 packages in 29.423s
+
+10 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+

@@ -83,7 +83,7 @@ class _QuestionsState extends State<Questions> {
                   'Kendini nasıl tanımlarsın? (4 tane seçiniz)',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.roboto(
-                      fontSize: 17, fontWeight: FontWeight.w600),
+                      fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ),
               SizedBox(
@@ -563,10 +563,10 @@ class _QuestionsState extends State<Questions> {
                   '(her satırdan bir cevap seçiniz) ',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.roboto(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Padding(
@@ -583,12 +583,14 @@ class _QuestionsState extends State<Questions> {
                             height: 50,
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
                                   'Çok sakinim',
                                   maxLines: 3,
+                                  minFontSize: 10,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q1.value == 1
                                           ? Colors.white
                                           : Colors.black),
@@ -619,12 +621,14 @@ class _QuestionsState extends State<Questions> {
                             height: 50,
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
                                   'Sakinim',
                                   maxLines: 1,
+                                  minFontSize: 10,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q1.value == 2
                                           ? Colors.white
                                           : Colors.black),
@@ -654,13 +658,15 @@ class _QuestionsState extends State<Questions> {
                             height: 50,
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
                                   'Heyecanlıyım',
-                                  overflow: TextOverflow.visible,
+                                  overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
+                                  minFontSize: 10,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q1.value == 3
                                           ? Colors.white
                                           : Colors.black),
@@ -690,13 +696,15 @@ class _QuestionsState extends State<Questions> {
                             height: 50,
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
-                                  'Çok heyecanlıyıma',
-                                  overflow: TextOverflow.visible,
+                                  'Çok heyecanlıyım',
+                                  overflow: TextOverflow.ellipsis,
                                   maxLines: 3,
+                                  minFontSize: 10,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q1.value == 4
                                           ? Colors.white
                                           : Colors.black),
@@ -739,12 +747,14 @@ class _QuestionsState extends State<Questions> {
                             height: 50,
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
                                   'Çok uysalım',
                                   maxLines: 3,
                                   textAlign: TextAlign.center,
+                                  minFontSize: 10,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q2.value == 1
                                           ? Colors.white
                                           : Colors.black),
@@ -775,12 +785,14 @@ class _QuestionsState extends State<Questions> {
                             height: 50,
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
                                   'Uysalım',
                                   maxLines: 1,
+                                  minFontSize: 10,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q2.value == 2
                                           ? Colors.white
                                           : Colors.black),
@@ -810,12 +822,14 @@ class _QuestionsState extends State<Questions> {
                             height: 50,
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
                                   'Sinirlenirim',
                                   maxLines: 1,
                                   textAlign: TextAlign.center,
+                                  minFontSize: 10,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q2.value == 3
                                           ? Colors.white
                                           : Colors.black),
@@ -845,12 +859,14 @@ class _QuestionsState extends State<Questions> {
                             height: 50,
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
                                   'Çok sinirlenirim',
                                   maxLines: 3,
                                   textAlign: TextAlign.center,
+                                  minFontSize: 10,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q2.value == 4
                                           ? Colors.white
                                           : Colors.black),
@@ -893,12 +909,14 @@ class _QuestionsState extends State<Questions> {
                             height: 50,
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
                                   'Takıma katılırım',
                                   maxLines: 2,
                                   textAlign: TextAlign.center,
+                                  minFontSize: 10,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q3.value == 1
                                           ? Colors.white
                                           : Colors.black),
@@ -929,12 +947,14 @@ class _QuestionsState extends State<Questions> {
                             height: 50,
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: AutoSizeText(
                                   'Bireysel düşünürüm',
                                   maxLines: 2,
                                   textAlign: TextAlign.center,
+                                  minFontSize: 10,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q3.value == 2
                                           ? Colors.white
                                           : Colors.black),
@@ -955,11 +975,6 @@ class _QuestionsState extends State<Questions> {
                         height: 50,
                         color: Colors.grey,
                       ),
-                      Container(
-                        width: 1,
-                        height: 50,
-                        color: Colors.grey,
-                      ),
                       Flexible(
                         child: GestureDetector(
                           onTap: () {
@@ -974,7 +989,9 @@ class _QuestionsState extends State<Questions> {
                                   'Takımı yönetirim',
                                   maxLines: 2,
                                   textAlign: TextAlign.center,
+                                  minFontSize: 10,
                                   style: TextStyle(
+                                      fontSize: 14,
                                       color: firebaseApi.q3.value == 3
                                           ? Colors.white
                                           : Colors.black),
@@ -1274,7 +1291,7 @@ class _QuestionsState extends State<Questions> {
                           child: Text('Soruları cevaplayın',
                               maxLines: 3,
                               style: GoogleFonts.roboto(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red[800])),
                         ),

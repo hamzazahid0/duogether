@@ -8,6 +8,7 @@ import 'package:gamehub/screens/login/login.dart';
 import 'package:gamehub/screens/login/questions.dart';
 import 'package:gamehub/screens/login/second.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Splash extends StatefulWidget {
@@ -20,7 +21,13 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   MainGetX mainGetX = Get.find();
   PageController pageController = PageController();
-  List<Color> colors = [Color.fromRGBO(170,95,239, 1), Color.fromRGBO(130,100,246, 1), Color.fromRGBO(102,119,223, 1), Color.fromRGBO(103,166,246, 1), Color.fromRGBO(84,202,242, 1)];
+  List<Color> colors = [
+    Color.fromRGBO(170, 95, 239, 1),
+    Color.fromRGBO(130, 100, 246, 1),
+    Color.fromRGBO(102, 119, 223, 1),
+    Color.fromRGBO(103, 166, 246, 1),
+    Color.fromRGBO(84, 202, 242, 1)
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +56,9 @@ class _SplashState extends State<Splash> {
             child: Obx(
               () => GestureDetector(
                 child: Container(
-                  decoration: BoxDecoration(color: Colors.grey[900],borderRadius: BorderRadius.circular(15)),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[900],
+                      borderRadius: BorderRadius.circular(15)),
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: Text(
@@ -62,7 +71,9 @@ class _SplashState extends State<Splash> {
                   if (mainGetX.pageIndex.value == 4) {
                     Get.off(() => ModeSelect(), transition: Transition.fade);
                   } else {
-                    pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.linear);
+                    pageController.nextPage(
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.linear);
                   }
                 },
               ),
@@ -81,9 +92,14 @@ class _SplashState extends State<Splash> {
                       children: List.generate(
                           5,
                           (index) => Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2.5),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 2.5),
                                 child: Container(
-                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(90), color: mainGetX.pageIndex.value == index ? Colors.white : Colors.black.withOpacity(0.2)),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(90),
+                                      color: mainGetX.pageIndex.value == index
+                                          ? Colors.white
+                                          : Colors.black.withOpacity(0.2)),
                                   height: 12,
                                   width: 12,
                                 ),
@@ -103,14 +119,9 @@ class _SplashState extends State<Splash> {
   }
 }
 
-class ModeSelect extends StatefulWidget {
-  const ModeSelect({Key? key}) : super(key: key);
+class ModeSelect extends StatelessWidget {
+  ModeSelect({Key? key}) : super(key: key);
 
-  @override
-  _ModeSelectState createState() => _ModeSelectState();
-}
-
-class _ModeSelectState extends State<ModeSelect> {
   MainGetX mainGetX = Get.find();
   dynamic white;
   dynamic black;
@@ -125,7 +136,9 @@ class _ModeSelectState extends State<ModeSelect> {
           ),
           Text(
             'Tarafını Seç',
-            style: GoogleFonts.roboto(fontSize: 27, color: context.isDarkMode ? Colors.white : Colors.grey[900]),
+            style: GoogleFonts.roboto(
+                fontSize: 27,
+                color: context.isDarkMode ? Colors.white : Colors.grey[900]),
           ),
           Expanded(
               child: Row(
@@ -137,7 +150,8 @@ class _ModeSelectState extends State<ModeSelect> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: OpenContainer(
-                      closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      closedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
                       tappable: false,
                       openBuilder: (context, action) {
                         Future.delayed(Duration(milliseconds: 100), () {
@@ -171,11 +185,14 @@ class _ModeSelectState extends State<ModeSelect> {
                               borderRadius: BorderRadius.circular(5),
                               child: InkWell(
                                 onTap: () {
-                                  if (context.isDarkMode) {
+                                  if (Get.isDarkMode) {
                                     Get.changeTheme(ThemeData.light());
+                                    GetStorage().write("isDark", false);
                                   }
-                                  Future.delayed(Duration(milliseconds: 100), () {
-                                    Get.off(() => Login(), transition: Transition.fade);
+                                  Future.delayed(Duration(milliseconds: 100),
+                                      () {
+                                    Get.off(() => Login(),
+                                        transition: Transition.fade);
                                   });
                                 },
                                 borderRadius: BorderRadius.circular(5),
@@ -183,7 +200,8 @@ class _ModeSelectState extends State<ModeSelect> {
                                   padding: const EdgeInsets.all(10),
                                   child: Text(
                                     'Beyaz mod',
-                                    style: GoogleFonts.roboto(fontSize: 20, color: Colors.white),
+                                    style: GoogleFonts.roboto(
+                                        fontSize: 20, color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -193,7 +211,8 @@ class _ModeSelectState extends State<ModeSelect> {
                 ],
               )),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                 child: Container(
                   height: double.infinity,
                   width: 3,
@@ -207,7 +226,8 @@ class _ModeSelectState extends State<ModeSelect> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: OpenContainer(
-                      closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      closedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
                       tappable: false,
                       openBuilder: (context, action) {
                         Future.delayed(Duration(milliseconds: 100), () {
@@ -241,11 +261,14 @@ class _ModeSelectState extends State<ModeSelect> {
                               borderRadius: BorderRadius.circular(5),
                               child: InkWell(
                                 onTap: () {
-                                  if (!context.isDarkMode) {
+                                  if (!Get.isDarkMode) {
                                     Get.changeTheme(ThemeData.dark());
+                                    GetStorage().write("isDark", true);
                                   }
-                                  Future.delayed(Duration(milliseconds: 100), () {
-                                    Get.off(() => Login(), transition: Transition.fade);
+                                  Future.delayed(Duration(milliseconds: 100),
+                                      () {
+                                    Get.off(() => Login(),
+                                        transition: Transition.fade);
                                   });
                                 },
                                 borderRadius: BorderRadius.circular(5),
@@ -253,7 +276,8 @@ class _ModeSelectState extends State<ModeSelect> {
                                   padding: const EdgeInsets.all(10),
                                   child: Text(
                                     'Koyu mod',
-                                    style: GoogleFonts.roboto(fontSize: 20, color: Colors.white),
+                                    style: GoogleFonts.roboto(
+                                        fontSize: 20, color: Colors.white),
                                   ),
                                 ),
                               ),

@@ -21,7 +21,11 @@
   </dict>
 	</array>
      
-
+<key>LSApplicationQueriesSchemes</key>
+<array>
+        <string>itms-beta</string>
+        <string>itms</string>
+</array>
 	 <key>FacebookAppID</key>
 <string>834506160512347</string>
 <key>FacebookClientToken</key>
@@ -47,7 +51,11 @@
   <string>fbauth2</string>
   <string>fbshareextension</string>
 </array>
-
+<key>LSApplicationQueriesSchemes</key>
+<array>
+        <string>itms-beta</string>
+        <string>itms</string>
+</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

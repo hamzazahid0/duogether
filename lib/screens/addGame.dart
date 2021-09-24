@@ -24,7 +24,7 @@ class _AddGameState extends State<AddGame> {
   Widget build(BuildContext context) {
     searchGameGetx.getGames();
     return Scaffold(
-      backgroundColor: context.isDarkMode ? Colors.black : Colors.grey[200],
+      backgroundColor: Get.isDarkMode ? Colors.black : Colors.grey[200],
       body: Obx(
         () => SafeArea(
           child: Stack(

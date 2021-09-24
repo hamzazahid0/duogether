@@ -75,7 +75,7 @@ class _MessageState extends State<Message> {
                 if (snapshot.hasData) {
                   if (snapshot.data!
                           .data()![firebaseApi.auth.currentUser!.uid] &&
-                      snapshot.data!.data()![widget.id]) {
+                      snapshot.data?.data()?[widget.id]) {
                     messageGetX.imageAllowed.value = true;
                   } else {
                     messageGetX.imageAllowed.value = false;
@@ -1687,7 +1687,7 @@ class _MessageState extends State<Message> {
                                                                     horizontal:
                                                                         15,
                                                                     vertical:
-                                                                        9),
+                                                                        5),
                                                                 child: ClipRect(
                                                                   child: Row(
                                                                     mainAxisSize:
@@ -1859,195 +1859,239 @@ class _MessageState extends State<Message> {
                               horizontal: BorderSide(
                                   color: Colors.white.withOpacity(0.076)))),
                       height: messageGetX.socialExpanded.value
-                          ? 180 + padding
+                          ? 190 + padding
                           : messageGetX.gifExpanded.value
-                              ? 250 + padding
+                              ? 200 + padding
                               : messageGetX.photoExpanded.value
-                                  ? 190 + padding
+                                  ? 200 + padding
                                   : messageGetX.wordsExpanded.value
-                                      ? 180 + padding
-                                      : 130 + padding,
+                                      ? 190 + padding
+                                      : 140 + padding,
                       width: MediaQuery.of(context).size.width,
-                      child: Padding(
-                        padding: const EdgeInsets.all(0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Visibility(
-                              visible: messageGetX.wordsExpanded.value,
-                              child: Flexible(
-                                flex: 1,
-                                child: Container(
-                                  // color: Colors.green,
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          colors: [
-                                        Colors.transparent,
-                                        Colors.transparent,
-                                        Colors.purple.withOpacity(0.01),
-                                        // Colors.green.withOpacity(0.2),
-                                        Colors.purple.withOpacity(0.5),
-                                        Colors.purple.withOpacity(0.9),
-                                        Colors.purple.withOpacity(1)
-                                      ],
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter)),
-                                  child: Padding(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Visibility(
+                            visible: messageGetX.wordsExpanded.value,
+                            child: Flexible(
+                              flex: 1,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [
+                                      Colors.transparent,
+                                      Colors.transparent,
+                                      Colors.purple.withOpacity(0.01),
+                                      Colors.purple.withOpacity(0.5),
+                                      Colors.purple.withOpacity(0.9),
+                                      Colors.purple.withOpacity(1)
+                                    ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter)),
+                                child: Padding(
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      shrinkWrap: true,
-                                      itemCount: infosGetx.words.length + 1,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 3),
-                                          child: Material(
-                                            elevation: 2,
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                            color: context.isDarkMode
-                                                ? Colors.grey[900]
-                                                : Colors.white,
-                                            child: InkWell(
+                                    child: Obx(
+                                      () => ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        shrinkWrap: true,
+                                        itemCount:
+                                            infosGetx.words.value.length + 1,
+                                        itemBuilder: (context, index) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 3),
+                                            child: Material(
+                                              elevation: 2,
                                               borderRadius:
                                                   BorderRadius.circular(30),
-                                              onTap: () async {
-                                                if (index ==
-                                                    infosGetx.words.length) {
-                                                  messageGetX.wordsExpanded
-                                                      .value = false;
-                                                  infosGetx.updateWords();
-                                                  return;
-                                                }
-                                                await firebaseApi.firestore
-                                                    .collection('Pairs')
-                                                    .doc(widget.pairId)
-                                                    .update({
-                                                  'hasMessage': true,
-                                                  'lastDate': DateTime.now(),
-                                                  'new': true,
-                                                  'lastSender': firebaseApi
-                                                      .auth.currentUser!.uid,
-                                                  'lastName':
-                                                      infosGetx.name.value,
-                                                  'lastMessage':
-                                                      infosGetx.words[index]
-                                                });
-                                                await firebaseApi.firestore
-                                                    .collection('Pairs')
-                                                    .doc(widget.pairId)
-                                                    .collection('Messages')
-                                                    .add({
-                                                  'content':
-                                                      infosGetx.words[index],
-                                                  'isText': true,
-                                                  'socialName': '',
-                                                  'isSocial': false,
-                                                  'photoLink': '',
-                                                  'launch': '',
-                                                  'from': firebaseApi
-                                                      .auth.currentUser!.uid,
-                                                  'date': DateTime.now()
-                                                });
-                                              },
-                                              child:
-                                                  index ==
-                                                          infosGetx.words.length
-                                                      ? Container(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        10),
-                                                            child: Center(
-                                                              child: Icon(Icons
-                                                                  .refresh_rounded),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      : Container(
-                                                          child: Center(
+                                              color: context.isDarkMode
+                                                  ? Colors.grey[900]
+                                                  : Colors.white,
+                                              child: InkWell(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                onTap: () async {
+                                                  if (index ==
+                                                      infosGetx.words.length) {
+                                                    infosGetx.updateWords();
+                                                    messageGetX.wordsExpanded
+                                                        .value = true;
+                                                    return;
+                                                  }
+                                                  await firebaseApi.firestore
+                                                      .collection('Pairs')
+                                                      .doc(widget.pairId)
+                                                      .update({
+                                                    'hasMessage': true,
+                                                    'lastDate': DateTime.now(),
+                                                    'new': true,
+                                                    'lastSender': firebaseApi
+                                                        .auth.currentUser!.uid,
+                                                    'lastName':
+                                                        infosGetx.name.value,
+                                                    'lastMessage':
+                                                        infosGetx.words[index]
+                                                  });
+                                                  await firebaseApi.firestore
+                                                      .collection('Pairs')
+                                                      .doc(widget.pairId)
+                                                      .collection('Messages')
+                                                      .add({
+                                                    'content':
+                                                        infosGetx.words[index],
+                                                    'isText': true,
+                                                    'socialName': '',
+                                                    'isSocial': false,
+                                                    'photoLink': '',
+                                                    'launch': '',
+                                                    'from': firebaseApi
+                                                        .auth.currentUser!.uid,
+                                                    'date': DateTime.now()
+                                                  });
+                                                },
+                                                child:
+                                                    index ==
+                                                            infosGetx
+                                                                .words.length
+                                                        ? Container(
                                                             child: Padding(
                                                               padding: const EdgeInsets
                                                                       .symmetric(
                                                                   horizontal:
-                                                                      12,
-                                                                  vertical: 2),
-                                                              child: Row(
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      Text(
-                                                                        infosGetx
-                                                                            .words[index],
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
+                                                                      10),
+                                                              child: Center(
+                                                                child: Icon(Icons
+                                                                    .refresh_rounded),
                                                               ),
                                                             ),
+                                                          )
+                                                        : Container(
+                                                            child: Center(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        12,
+                                                                    vertical:
+                                                                        2),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Row(
+                                                                      children: [
+                                                                        Text(
+                                                                          infosGetx
+                                                                              .words[index],
+                                                                          style:
+                                                                              TextStyle(fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            decoration: BoxDecoration(
+                                                                // boxShadow: [
+                                                                //   BoxShadow(
+                                                                //       color: Colors.grey
+                                                                //           .withOpacity(0.3),
+                                                                //       blurRadius: 2,
+                                                                //       spreadRadius: 1,
+                                                                //       offset: Offset(2, 2))
+                                                                // ],
+                                                                color: Colors.transparent,
+                                                                borderRadius: BorderRadius.circular(30)),
                                                           ),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  // boxShadow: [
-                                                                  //   BoxShadow(
-                                                                  //       color: Colors.grey
-                                                                  //           .withOpacity(0.3),
-                                                                  //       blurRadius: 2,
-                                                                  //       spreadRadius: 1,
-                                                                  //       offset: Offset(2, 2))
-                                                                  // ],
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              30)),
-                                                        ),
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
+                                          );
+                                        },
+                                      ),
+                                    )),
                               ),
                             ),
-                            Visibility(
-                              visible: messageGetX.socialExpanded.value,
-                              child: Flexible(
-                                flex: 1,
-                                child: Container(
-                                  // color: Colors.green,
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          colors: [
-                                        Colors.transparent,
-                                        Colors.transparent,
-                                        Colors.green.withOpacity(0.01),
-                                        // Colors.green.withOpacity(0.2),
-                                        Colors.green.withOpacity(0.5),
-                                        Colors.green.withOpacity(0.9),
-                                        Colors.green.withOpacity(1)
-                                      ],
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter)),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 5),
-                                    child: infosGetx.social.length == 0
-                                        ? Center(
-                                            child: Padding(
+                          ),
+                          Visibility(
+                            visible: messageGetX.socialExpanded.value,
+                            child: Flexible(
+                              flex: 1,
+                              child: Container(
+                                // color: Colors.green,
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [
+                                      Colors.transparent,
+                                      Colors.transparent,
+                                      Colors.green.withOpacity(0.01),
+                                      // Colors.green.withOpacity(0.2),
+                                      Colors.green.withOpacity(0.5),
+                                      Colors.green.withOpacity(0.9),
+                                      Colors.green.withOpacity(1)
+                                    ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter)),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: infosGetx.social.length == 0
+                                      ? Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 3),
+                                            child: Material(
+                                              elevation: 2,
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              color: context.isDarkMode
+                                                  ? Colors.grey[900]
+                                                  : Colors.white,
+                                              child: InkWell(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                child: Container(
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 12,
+                                                          vertical: 2),
+                                                      child: Text(
+                                                        'Sosyal platform eklenmedi',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                      // boxShadow: [
+                                                      //   BoxShadow(
+                                                      //       color: Colors.grey
+                                                      //           .withOpacity(0.3),
+                                                      //       blurRadius: 2,
+                                                      //       spreadRadius: 1,
+                                                      //       offset: Offset(2, 2))
+                                                      // ],
+                                                      color: Colors.transparent,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30)),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: infosGetx.social.length,
+                                          itemBuilder: (context, index) {
+                                            return Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      horizontal: 20,
+                                                      horizontal: 8,
                                                       vertical: 3),
                                               child: Material(
                                                 elevation: 2,
@@ -2059,6 +2103,49 @@ class _MessageState extends State<Message> {
                                                 child: InkWell(
                                                   borderRadius:
                                                       BorderRadius.circular(30),
+                                                  onTap: () async {
+                                                    String content =
+                                                        '${infosGetx.social[index]['name']}: ${infosGetx.social[index]['data']}';
+                                                    await firebaseApi.firestore
+                                                        .collection('Pairs')
+                                                        .doc(widget.pairId)
+                                                        .update({
+                                                      'hasMessage': true,
+                                                      'lastDate':
+                                                          DateTime.now(),
+                                                      'new': true,
+                                                      'lastMessage': content,
+                                                      'lastSender': firebaseApi
+                                                          .auth
+                                                          .currentUser!
+                                                          .uid,
+                                                      'lastName':
+                                                          infosGetx.name.value
+                                                    });
+                                                    await firebaseApi.firestore
+                                                        .collection('Pairs')
+                                                        .doc(widget.pairId)
+                                                        .collection('Messages')
+                                                        .add({
+                                                      'content': infosGetx
+                                                              .social[index]
+                                                          ['data'],
+                                                      'socialName': infosGetx
+                                                              .social[index]
+                                                          ['name'],
+                                                      'isSocial': true,
+                                                      'launch': infosGetx
+                                                              .social[index]
+                                                          ['launch'],
+                                                      'photoLink': infosGetx
+                                                              .social[index]
+                                                          ['icon'],
+                                                      'isText': true,
+                                                      'from': firebaseApi.auth
+                                                          .currentUser!.uid,
+                                                      'date': DateTime.now()
+                                                    });
+                                                  },
                                                   child: Container(
                                                     child: Center(
                                                       child: Padding(
@@ -2067,12 +2154,41 @@ class _MessageState extends State<Message> {
                                                                     .symmetric(
                                                                 horizontal: 12,
                                                                 vertical: 2),
-                                                        child: Text(
-                                                          'Sosyal platform eklenmedi',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                        child: Row(
+                                                          children: [
+                                                            CircleAvatar(
+                                                              backgroundColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              backgroundImage:
+                                                                  NetworkImage(
+                                                                infosGetx.social[
+                                                                        index]
+                                                                    ['icon'],
+                                                              ),
+                                                              radius: 15,
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                // Text(
+                                                                //     '${snapshot.data!.docs[index]['name']}: '),
+                                                                // Text(
+                                                                //     '${infosGetx.social[index]['name']}: '),
+                                                                Text(
+                                                                  infosGetx.social[
+                                                                          index]
+                                                                      ['data'],
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
@@ -2093,844 +2209,826 @@ class _MessageState extends State<Message> {
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          )
-                                        : ListView.builder(
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount: infosGetx.social.length,
-                                            itemBuilder: (context, index) {
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 3),
-                                                child: Material(
-                                                  elevation: 2,
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-                                                  color: context.isDarkMode
-                                                      ? Colors.grey[900]
-                                                      : Colors.white,
-                                                  child: InkWell(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30),
-                                                    onTap: () async {
-                                                      String content =
-                                                          '${infosGetx.social[index]['name']}: ${infosGetx.social[index]['data']}';
-                                                      await firebaseApi
-                                                          .firestore
-                                                          .collection('Pairs')
-                                                          .doc(widget.pairId)
-                                                          .update({
-                                                        'hasMessage': true,
-                                                        'lastDate':
-                                                            DateTime.now(),
-                                                        'new': true,
-                                                        'lastMessage': content,
-                                                        'lastSender':
-                                                            firebaseApi
-                                                                .auth
-                                                                .currentUser!
-                                                                .uid,
-                                                        'lastName':
-                                                            infosGetx.name.value
-                                                      });
-                                                      await firebaseApi
-                                                          .firestore
-                                                          .collection('Pairs')
-                                                          .doc(widget.pairId)
-                                                          .collection(
-                                                              'Messages')
-                                                          .add({
-                                                        'content': infosGetx
-                                                                .social[index]
-                                                            ['data'],
-                                                        'socialName': infosGetx
-                                                                .social[index]
-                                                            ['name'],
-                                                        'isSocial': true,
-                                                        'launch': infosGetx
-                                                                .social[index]
-                                                            ['launch'],
-                                                        'photoLink': infosGetx
-                                                                .social[index]
-                                                            ['icon'],
-                                                        'isText': true,
-                                                        'from': firebaseApi.auth
-                                                            .currentUser!.uid,
-                                                        'date': DateTime.now()
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      child: Center(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      12,
-                                                                  vertical: 2),
-                                                          child: Row(
-                                                            children: [
-                                                              CircleAvatar(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                backgroundImage:
-                                                                    NetworkImage(
-                                                                  infosGetx.social[
-                                                                          index]
-                                                                      ['icon'],
-                                                                ),
-                                                                radius: 15,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  // Text(
-                                                                  //     '${snapshot.data!.docs[index]['name']}: '),
-                                                                  // Text(
-                                                                  //     '${infosGetx.social[index]['name']}: '),
-                                                                  Text(
-                                                                    infosGetx.social[
-                                                                            index]
-                                                                        [
-                                                                        'data'],
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                          // boxShadow: [
-                                                          //   BoxShadow(
-                                                          //       color: Colors.grey
-                                                          //           .withOpacity(0.3),
-                                                          //       blurRadius: 2,
-                                                          //       spreadRadius: 1,
-                                                          //       offset: Offset(2, 2))
-                                                          // ],
-                                                          color: Colors
-                                                              .transparent,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      30)),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                  ),
+                                            );
+                                          },
+                                        ),
                                 ),
                               ),
                             ),
-                            Visibility(
-                              visible: messageGetX.gifExpanded.value,
-                              child: Flexible(
-                                flex: 5,
-                                child: Container(
-                                  // color: Colors.redAccent,
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          colors: [
-                                        Colors.transparent,
-                                        Colors.transparent,
-                                        Colors.redAccent.withOpacity(0.1),
-                                        Colors.redAccent.withOpacity(0.4),
-                                        Colors.redAccent.withOpacity(0.7),
-                                        Colors.redAccent.withOpacity(1)
-                                      ],
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter)),
-                                  child: Obx(
-                                    () => Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5),
-                                      child: FutureBuilder<Gif?>(
-                                          future: Api().getGifs(
-                                              messageGetX.search.value),
-                                          builder: (context, snapshot) {
-                                            List<String> links = [];
-                                            return snapshot.hasData
-                                                ? ListView.builder(
-                                                    physics:
-                                                        BouncingScrollPhysics(),
-                                                    scrollDirection:
-                                                        Axis.horizontal,
-                                                    itemCount: snapshot
-                                                        .data!.results.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      snapshot.data!
-                                                          .results[index].media
-                                                          .forEach((element) {
-                                                        if (!links.contains(
-                                                            element['tinygif']!
-                                                                .url)) {
-                                                          links.add(element[
-                                                                  'tinygif']!
-                                                              .url);
-                                                        }
-                                                      });
-                                                      return Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 8,
-                                                                vertical: 3),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(20),
-                                                          child: Container(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () async {
-                                                                await firebaseApi
-                                                                    .firestore
-                                                                    .collection(
-                                                                        'Pairs')
-                                                                    .doc(widget
-                                                                        .pairId)
-                                                                    .update({
-                                                                  'hasMessage':
-                                                                      true,
-                                                                  'lastDate':
-                                                                      DateTime
-                                                                          .now(),
-                                                                  'new': true,
-                                                                  'lastSender':
-                                                                      firebaseApi
-                                                                          .auth
-                                                                          .currentUser!
-                                                                          .uid,
-                                                                  'lastName':
-                                                                      infosGetx
-                                                                          .name
-                                                                          .value,
-                                                                  'lastMessage':
-                                                                      'Gif'
-                                                                });
-                                                                await firebaseApi
-                                                                    .firestore
-                                                                    .collection(
-                                                                        'Pairs')
-                                                                    .doc(widget
-                                                                        .pairId)
-                                                                    .collection(
-                                                                        'Messages')
-                                                                    .add({
-                                                                  'content':
-                                                                      links[
-                                                                          index],
-                                                                  'isText':
-                                                                      false,
-                                                                  'socialName':
-                                                                      '',
-                                                                  'photoLink':
-                                                                      '',
-                                                                  'launch': '',
-                                                                  'isSocial':
-                                                                      false,
-                                                                  'from': firebaseApi
-                                                                      .auth
-                                                                      .currentUser!
-                                                                      .uid,
-                                                                  'date':
-                                                                      DateTime
-                                                                          .now()
-                                                                });
-                                                              },
-                                                              child:
-                                                                  FadeInImage(
-                                                                placeholder:
-                                                                    AssetImage(
-                                                                        'assets/loading.gif'),
-                                                                image: NetworkImage(
-                                                                    links[
-                                                                        index]),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
-                                                              // child:
-                                                              //     Image.network(
-                                                              //   links[index],
-                                                              //   fit: BoxFit.cover,
-                                                              // ),
-                                                            ),
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            30)),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  )
-                                                : Center(
-                                                    child:
-                                                        CircularPercentIndicator(
-                                                      radius: 20,
-                                                    ),
-                                                  );
-                                          }),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Visibility(
-                              visible: messageGetX.photoExpanded.value,
-                              child: Flexible(
-                                flex: 2,
-                                child: Container(
-                                  // color: Colors.orange,
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          colors: [
-                                        Colors.transparent,
-                                        Colors.transparent,
-                                        Colors.orange.withOpacity(0.01),
-                                        // Colors.green.withOpacity(0.2),
-                                        Colors.orange.withOpacity(0.5),
-                                        Colors.orange.withOpacity(0.9),
-                                        Colors.orange.withOpacity(1)
-                                      ],
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter)),
-                                  child: Padding(
+                          ),
+                          Visibility(
+                            visible: messageGetX.gifExpanded.value,
+                            child: Flexible(
+                              flex: 2,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [
+                                      Colors.transparent,
+                                      Colors.transparent,
+                                      Colors.redAccent.withOpacity(0.1),
+                                      Colors.redAccent.withOpacity(0.4),
+                                      Colors.redAccent.withOpacity(0.7),
+                                      Colors.redAccent.withOpacity(1)
+                                    ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter)),
+                                child: Obx(
+                                  () => Padding(
                                     padding:
-                                        const EdgeInsets.symmetric(vertical: 2),
-                                    child: Center(
-                                      child: Row(
-                                        children: [
-                                          Flexible(
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10),
-                                              child: Material(
-                                                color: context.isDarkMode
-                                                    ? Colors.grey[900]
-                                                    : Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(30),
-                                                elevation: 2,
-                                                child: InkWell(
-                                                  onTap: () async {
-                                                    if (!messageGetX
-                                                        .imageAllowed.value) {
-                                                      Get.snackbar(
-                                                          'Resim izin verilmedi',
-                                                          'Resim göndermek için her iki tarafın izin vermesi gerek',
-                                                          colorText:
-                                                              Colors.white);
-                                                      return;
-                                                    }
-
-                                                    await Permission.camera
-                                                        .request();
-                                                    if (await Permission
-                                                        .camera.isGranted) {
-                                                      var image =
-                                                          await ImagePicker()
-                                                              .getImage(
-                                                                  source:
-                                                                      ImageSource
-                                                                          .camera,
-                                                                  imageQuality:
-                                                                      40);
-                                                      if (image != null) {
-                                                        var task = firebaseApi
-                                                            .storage
-                                                            .ref()
-                                                            .child(
-                                                                'images/${Uuid().v1()}')
-                                                            .putFile(File(
-                                                                image.path));
-                                                        task.then((v) async {
-                                                          String link = await v
-                                                              .ref
-                                                              .getDownloadURL();
-
-                                                          await firebaseApi
-                                                              .firestore
-                                                              .collection(
-                                                                  'Pairs')
-                                                              .doc(
-                                                                  widget.pairId)
-                                                              .update({
-                                                            'hasMessage': true,
-                                                            'lastDate':
-                                                                DateTime.now(),
-                                                            'new': true,
-                                                            'lastName':
-                                                                infosGetx
-                                                                    .name.value,
-                                                            'lastSender':
-                                                                firebaseApi
+                                        const EdgeInsets.symmetric(vertical: 3),
+                                    child: FutureBuilder<Gif?>(
+                                        future: Api()
+                                            .getGifs(messageGetX.search.value),
+                                        builder: (context, snapshot) {
+                                          List<String> links = [];
+                                          return snapshot.hasData
+                                              ? ListView.builder(
+                                                  physics:
+                                                      BouncingScrollPhysics(),
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemCount: snapshot
+                                                      .data!.results.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    snapshot.data!
+                                                        .results[index].media
+                                                        .forEach((element) {
+                                                      if (!links.contains(
+                                                          element['tinygif']!
+                                                              .url)) {
+                                                        links.add(
+                                                            element['tinygif']!
+                                                                .url);
+                                                      }
+                                                    });
+                                                    return Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 8,
+                                                      ),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                        child: Container(
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () async {
+                                                              await firebaseApi
+                                                                  .firestore
+                                                                  .collection(
+                                                                      'Pairs')
+                                                                  .doc(widget
+                                                                      .pairId)
+                                                                  .update({
+                                                                'hasMessage':
+                                                                    true,
+                                                                'lastDate':
+                                                                    DateTime
+                                                                        .now(),
+                                                                'new': true,
+                                                                'lastSender':
+                                                                    firebaseApi
+                                                                        .auth
+                                                                        .currentUser!
+                                                                        .uid,
+                                                                'lastName':
+                                                                    infosGetx
+                                                                        .name
+                                                                        .value,
+                                                                'lastMessage':
+                                                                    'Gif'
+                                                              });
+                                                              await firebaseApi
+                                                                  .firestore
+                                                                  .collection(
+                                                                      'Pairs')
+                                                                  .doc(widget
+                                                                      .pairId)
+                                                                  .collection(
+                                                                      'Messages')
+                                                                  .add({
+                                                                'content':
+                                                                    links[
+                                                                        index],
+                                                                'isText': false,
+                                                                'socialName':
+                                                                    '',
+                                                                'photoLink': '',
+                                                                'launch': '',
+                                                                'isSocial':
+                                                                    false,
+                                                                'from': firebaseApi
                                                                     .auth
                                                                     .currentUser!
                                                                     .uid,
-                                                            'lastMessage':
-                                                                'Resim'
-                                                          });
-                                                          await firebaseApi
-                                                              .firestore
-                                                              .collection(
-                                                                  'Pairs')
-                                                              .doc(
-                                                                  widget.pairId)
-                                                              .collection(
-                                                                  'Messages')
-                                                              .add({
-                                                            'content': link,
-                                                            'isText': false,
-                                                            'socialName': '',
-                                                            'isSocial': false,
-                                                            'launch': '',
-                                                            'photoLink': '',
-                                                            'from': firebaseApi
-                                                                .auth
-                                                                .currentUser!
-                                                                .uid,
-                                                            'date':
-                                                                DateTime.now()
-                                                          });
-                                                        });
-                                                      }
-                                                    }
-                                                  },
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                        // boxShadow: [
-                                                        //   BoxShadow(
-                                                        //       color: Colors.purple
-                                                        //           .withOpacity(
-                                                        //               0.3),
-                                                        //       blurRadius: 2,
-                                                        //       spreadRadius: 1,
-                                                        //       offset:
-                                                        //           Offset(2, 2))
-                                                        // ],
-                                                        // gradient: LinearGradient(
-                                                        //     colors: [
-                                                        //       Colors.purple,
-                                                        //       Colors.deepPurple
-                                                        //     ]),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(30)),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 5,
-                                                          vertical: 8),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          // Icon(Icons.camera_alt_rounded),
-                                                          // SizedBox(
-                                                          //   width: 5,
-                                                          // ),
-                                                          Text('Kamera',
-                                                              style: GoogleFonts.roboto(
-                                                                  fontSize: 20,
-                                                                  color: context
-                                                                          .isDarkMode
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors.grey[
-                                                                          900]))
-                                                        ],
+                                                                'date': DateTime
+                                                                    .now()
+                                                              });
+                                                            },
+                                                            child: FadeInImage(
+                                                              placeholder:
+                                                                  AssetImage(
+                                                                      'assets/loading.gif'),
+                                                              image: NetworkImage(
+                                                                  links[index]),
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          30)),
+                                                        ),
                                                       ),
+                                                    );
+                                                  },
+                                                )
+                                              : Center(
+                                                  child:
+                                                      CircularPercentIndicator(
+                                                    radius: 20,
+                                                  ),
+                                                );
+                                        }),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: messageGetX.photoExpanded.value,
+                            child: Flexible(
+                              flex: 2,
+                              child: Container(
+                                // color: Colors.orange,
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [
+                                      Colors.transparent,
+                                      Colors.transparent,
+                                      Colors.orange.withOpacity(0.01),
+                                      // Colors.green.withOpacity(0.2),
+                                      Colors.orange.withOpacity(0.5),
+                                      Colors.orange.withOpacity(0.9),
+                                      Colors.orange.withOpacity(1)
+                                    ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter)),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 2),
+                                  child: Center(
+                                    child: Row(
+                                      children: [
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10),
+                                            child: Material(
+                                              color: context.isDarkMode
+                                                  ? Colors.grey[900]
+                                                  : Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              elevation: 2,
+                                              child: InkWell(
+                                                onTap: () async {
+                                                  if (!messageGetX
+                                                      .imageAllowed.value) {
+                                                    Get.snackbar(
+                                                        'Resim izin verilmedi',
+                                                        'Resim göndermek için her iki tarafın izin vermesi gerek',
+                                                        colorText:
+                                                            Colors.white);
+                                                    return;
+                                                  }
+
+                                                  await Permission.camera
+                                                      .request();
+                                                  if (await Permission
+                                                      .camera.isGranted) {
+                                                    var image =
+                                                        await ImagePicker()
+                                                            .getImage(
+                                                                source:
+                                                                    ImageSource
+                                                                        .camera,
+                                                                imageQuality:
+                                                                    40);
+                                                    if (image != null) {
+                                                      var task = firebaseApi
+                                                          .storage
+                                                          .ref()
+                                                          .child(
+                                                              'images/${Uuid().v1()}')
+                                                          .putFile(
+                                                              File(image.path));
+                                                      task.then((v) async {
+                                                        String link = await v
+                                                            .ref
+                                                            .getDownloadURL();
+
+                                                        await firebaseApi
+                                                            .firestore
+                                                            .collection('Pairs')
+                                                            .doc(widget.pairId)
+                                                            .update({
+                                                          'hasMessage': true,
+                                                          'lastDate':
+                                                              DateTime.now(),
+                                                          'new': true,
+                                                          'lastName': infosGetx
+                                                              .name.value,
+                                                          'lastSender':
+                                                              firebaseApi
+                                                                  .auth
+                                                                  .currentUser!
+                                                                  .uid,
+                                                          'lastMessage': 'Resim'
+                                                        });
+                                                        await firebaseApi
+                                                            .firestore
+                                                            .collection('Pairs')
+                                                            .doc(widget.pairId)
+                                                            .collection(
+                                                                'Messages')
+                                                            .add({
+                                                          'content': link,
+                                                          'isText': false,
+                                                          'socialName': '',
+                                                          'isSocial': false,
+                                                          'launch': '',
+                                                          'photoLink': '',
+                                                          'from': firebaseApi
+                                                              .auth
+                                                              .currentUser!
+                                                              .uid,
+                                                          'date': DateTime.now()
+                                                        });
+                                                      });
+                                                    }
+                                                  }
+                                                },
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      // boxShadow: [
+                                                      //   BoxShadow(
+                                                      //       color: Colors.purple
+                                                      //           .withOpacity(
+                                                      //               0.3),
+                                                      //       blurRadius: 2,
+                                                      //       spreadRadius: 1,
+                                                      //       offset:
+                                                      //           Offset(2, 2))
+                                                      // ],
+                                                      // gradient: LinearGradient(
+                                                      //     colors: [
+                                                      //       Colors.purple,
+                                                      //       Colors.deepPurple
+                                                      //     ]),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30)),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 5,
+                                                        vertical: 8),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        // Icon(Icons.camera_alt_rounded),
+                                                        // SizedBox(
+                                                        //   width: 5,
+                                                        // ),
+                                                        Text('Kamera',
+                                                            style: GoogleFonts.roboto(
+                                                                fontSize: 20,
+                                                                color: context
+                                                                        .isDarkMode
+                                                                    ? Colors
+                                                                        .white
+                                                                    : Colors.grey[
+                                                                        900]))
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                            flex: 1,
                                           ),
-                                          Flexible(
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10),
-                                              child: Material(
-                                                color: context.isDarkMode
-                                                    ? Colors.grey[900]
-                                                    : Colors.white,
+                                          flex: 1,
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10),
+                                            child: Material(
+                                              color: context.isDarkMode
+                                                  ? Colors.grey[900]
+                                                  : Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              elevation: 2,
+                                              child: InkWell(
+                                                onTap: () async {
+                                                  if (!messageGetX
+                                                      .imageAllowed.value) {
+                                                    Get.snackbar(
+                                                        'Resim izin verilmedi',
+                                                        'Resim göndermek için her iki tarafın izin vermesi gerek',
+                                                        colorText:
+                                                            Colors.white);
+                                                    return;
+                                                  }
+                                                  await Permission.storage
+                                                      .request();
+                                                  await Permission.photos
+                                                      .request();
+                                                  if (await Permission
+                                                          .storage.isGranted &&
+                                                      await Permission
+                                                          .photos.isGranted) {
+                                                    var image =
+                                                        await ImagePicker()
+                                                            .getImage(
+                                                                source:
+                                                                    ImageSource
+                                                                        .gallery,
+                                                                imageQuality:
+                                                                    40);
+                                                    if (image != null) {
+                                                      var task = firebaseApi
+                                                          .storage
+                                                          .ref()
+                                                          .child(
+                                                              'images/${Uuid().v1()}')
+                                                          .putFile(
+                                                              File(image.path));
+                                                      task.then((v) async {
+                                                        String link = await v
+                                                            .ref
+                                                            .getDownloadURL();
+
+                                                        await firebaseApi
+                                                            .firestore
+                                                            .collection('Pairs')
+                                                            .doc(widget.pairId)
+                                                            .update({
+                                                          'hasMessage': true,
+                                                          'lastDate':
+                                                              DateTime.now(),
+                                                          'new': true,
+                                                          'lastName': infosGetx
+                                                              .name.value,
+                                                          'lastSender':
+                                                              firebaseApi
+                                                                  .auth
+                                                                  .currentUser!
+                                                                  .uid,
+                                                          'lastMessage': 'Resim'
+                                                        });
+                                                        await firebaseApi
+                                                            .firestore
+                                                            .collection('Pairs')
+                                                            .doc(widget.pairId)
+                                                            .collection(
+                                                                'Messages')
+                                                            .add({
+                                                          'content': link,
+                                                          'isText': false,
+                                                          'photoLink': '',
+                                                          'socialName': '',
+                                                          'isSocial': false,
+                                                          'launch': '',
+                                                          'from': firebaseApi
+                                                              .auth
+                                                              .currentUser!
+                                                              .uid,
+                                                          'date': DateTime.now()
+                                                        });
+                                                      });
+                                                    }
+                                                  }
+                                                },
                                                 borderRadius:
                                                     BorderRadius.circular(30),
-                                                elevation: 2,
-                                                child: InkWell(
-                                                  onTap: () async {
-                                                    if (!messageGetX
-                                                        .imageAllowed.value) {
-                                                      Get.snackbar(
-                                                          'Resim izin verilmedi',
-                                                          'Resim göndermek için her iki tarafın izin vermesi gerek',
-                                                          colorText:
-                                                              Colors.white);
-                                                      return;
-                                                    }
-                                                    await Permission.storage
-                                                        .request();
-                                                    await Permission.photos
-                                                        .request();
-                                                    if (await Permission.storage
-                                                            .isGranted &&
-                                                        await Permission
-                                                            .photos.isGranted) {
-                                                      var image =
-                                                          await ImagePicker()
-                                                              .getImage(
-                                                                  source:
-                                                                      ImageSource
-                                                                          .gallery,
-                                                                  imageQuality:
-                                                                      40);
-                                                      if (image != null) {
-                                                        var task = firebaseApi
-                                                            .storage
-                                                            .ref()
-                                                            .child(
-                                                                'images/${Uuid().v1()}')
-                                                            .putFile(File(
-                                                                image.path));
-                                                        task.then((v) async {
-                                                          String link = await v
-                                                              .ref
-                                                              .getDownloadURL();
-
-                                                          await firebaseApi
-                                                              .firestore
-                                                              .collection(
-                                                                  'Pairs')
-                                                              .doc(
-                                                                  widget.pairId)
-                                                              .update({
-                                                            'hasMessage': true,
-                                                            'lastDate':
-                                                                DateTime.now(),
-                                                            'new': true,
-                                                            'lastName':
-                                                                infosGetx
-                                                                    .name.value,
-                                                            'lastSender':
-                                                                firebaseApi
-                                                                    .auth
-                                                                    .currentUser!
-                                                                    .uid,
-                                                            'lastMessage':
-                                                                'Resim'
-                                                          });
-                                                          await firebaseApi
-                                                              .firestore
-                                                              .collection(
-                                                                  'Pairs')
-                                                              .doc(
-                                                                  widget.pairId)
-                                                              .collection(
-                                                                  'Messages')
-                                                              .add({
-                                                            'content': link,
-                                                            'isText': false,
-                                                            'photoLink': '',
-                                                            'socialName': '',
-                                                            'isSocial': false,
-                                                            'launch': '',
-                                                            'from': firebaseApi
-                                                                .auth
-                                                                .currentUser!
-                                                                .uid,
-                                                            'date':
-                                                                DateTime.now()
-                                                          });
-                                                        });
-                                                      }
-                                                    }
-                                                  },
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                        // boxShadow: [
-                                                        //   BoxShadow(
-                                                        //       color: Colors.purple
-                                                        //           .withOpacity(
-                                                        //               0.3),
-                                                        //       blurRadius: 2,
-                                                        //       spreadRadius: 1,
-                                                        //       offset:
-                                                        //           Offset(2, 2))
-                                                        // ],
-                                                        // gradient: LinearGradient(
-                                                        //     colors: [
-                                                        //       Colors.purple,
-                                                        //       Colors.deepPurple
-                                                        //     ]),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(30)),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 5,
-                                                          vertical: 8),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          // Icon(Icons.camera_alt_rounded),
-                                                          // SizedBox(
-                                                          //   width: 5,
-                                                          // ),
-                                                          Text('Galeri',
-                                                              style: GoogleFonts.roboto(
-                                                                  fontSize: 20,
-                                                                  color: context
-                                                                          .isDarkMode
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors.grey[
-                                                                          900]))
-                                                        ],
-                                                      ),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      // boxShadow: [
+                                                      //   BoxShadow(
+                                                      //       color: Colors.purple
+                                                      //           .withOpacity(
+                                                      //               0.3),
+                                                      //       blurRadius: 2,
+                                                      //       spreadRadius: 1,
+                                                      //       offset:
+                                                      //           Offset(2, 2))
+                                                      // ],
+                                                      // gradient: LinearGradient(
+                                                      //     colors: [
+                                                      //       Colors.purple,
+                                                      //       Colors.deepPurple
+                                                      //     ]),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30)),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 5,
+                                                        vertical: 8),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        // Icon(Icons.camera_alt_rounded),
+                                                        // SizedBox(
+                                                        //   width: 5,
+                                                        // ),
+                                                        Text('Galeri',
+                                                            style: GoogleFonts.roboto(
+                                                                fontSize: 20,
+                                                                color: context
+                                                                        .isDarkMode
+                                                                    ? Colors
+                                                                        .white
+                                                                    : Colors.grey[
+                                                                        900]))
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                            flex: 1,
                                           ),
-                                          // Flexible(
-                                          //   child: Padding(
-                                          //     padding: const EdgeInsets.all(10),
-                                          //     child: Container(
-                                          //       decoration: BoxDecoration(
-                                          //           boxShadow: [
-                                          //             BoxShadow(
-                                          //                 color: Colors.green
-                                          //                     .withOpacity(0.3),
-                                          //                 blurRadius: 2,
-                                          //                 spreadRadius: 1,
-                                          //                 offset: Offset(2, 2))
-                                          //           ],
-                                          //           gradient: LinearGradient(
-                                          //               colors: [
-                                          //                 Colors.green,
-                                          //                 Colors.lightGreen
-                                          //               ]),
-                                          //           borderRadius:
-                                          //               BorderRadius.circular(
-                                          //                   30)),
-                                          //       child: Padding(
-                                          //         padding:
-                                          //             const EdgeInsets.symmetric(
-                                          //                 horizontal: 5,
-                                          //                 vertical: 8),
-                                          //         child: Row(
-                                          //           mainAxisAlignment:
-                                          //               MainAxisAlignment.center,
-                                          //           children: [
-                                          //             // Icon(Icons.photo_library_rounded),
-                                          //             // SizedBox(
-                                          //             //   width: 5,
-                                          //             // ),
-                                          //             Text('Galeri',
-                                          //                 style: GoogleFonts.acme(
-                                          //                     fontSize: 20,
-                                          //                     color:
-                                          //                         Colors.white))
-                                          //           ],
-                                          //         ),
-                                          //       ),
-                                          //     ),
-                                          //   ),
-                                          //   flex: 1,
-                                          // ),
-                                        ],
-                                      ),
+                                          flex: 1,
+                                        ),
+                                        // Flexible(
+                                        //   child: Padding(
+                                        //     padding: const EdgeInsets.all(10),
+                                        //     child: Container(
+                                        //       decoration: BoxDecoration(
+                                        //           boxShadow: [
+                                        //             BoxShadow(
+                                        //                 color: Colors.green
+                                        //                     .withOpacity(0.3),
+                                        //                 blurRadius: 2,
+                                        //                 spreadRadius: 1,
+                                        //                 offset: Offset(2, 2))
+                                        //           ],
+                                        //           gradient: LinearGradient(
+                                        //               colors: [
+                                        //                 Colors.green,
+                                        //                 Colors.lightGreen
+                                        //               ]),
+                                        //           borderRadius:
+                                        //               BorderRadius.circular(
+                                        //                   30)),
+                                        //       child: Padding(
+                                        //         padding:
+                                        //             const EdgeInsets.symmetric(
+                                        //                 horizontal: 5,
+                                        //                 vertical: 8),
+                                        //         child: Row(
+                                        //           mainAxisAlignment:
+                                        //               MainAxisAlignment.center,
+                                        //           children: [
+                                        //             // Icon(Icons.photo_library_rounded),
+                                        //             // SizedBox(
+                                        //             //   width: 5,
+                                        //             // ),
+                                        //             Text('Galeri',
+                                        //                 style: GoogleFonts.acme(
+                                        //                     fontSize: 20,
+                                        //                     color:
+                                        //                         Colors.white))
+                                        //           ],
+                                        //         ),
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        //   flex: 1,
+                                        // ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                            Container(
-                              height: 50,
+                          ),
+                          Container(
+                            height: 50,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Padding(
+                                  padding: messageGetX.gifExpanded.value
+                                      ? EdgeInsets.only(
+                                          bottom: 5, left: 5, right: 5)
+                                      : const EdgeInsets.all(5),
+                                  child: Material(
+                                    borderRadius: messageGetX.gifExpanded.value
+                                        ? BorderRadius.vertical(
+                                            bottom: Radius.circular(30))
+                                        : BorderRadius.circular(30),
+                                    color: Colors.redAccent,
+                                    child: InkWell(
+                                      onTap: () {
+                                        messageGetX.expandSocial(false);
+                                        messageGetX.expandWords(false);
+                                        messageGetX.expandPhoto(false);
+                                        messageGetX.expandGif(
+                                            !messageGetX.gifExpanded.value);
+                                      },
+                                      borderRadius:
+                                          messageGetX.gifExpanded.value
+                                              ? BorderRadius.vertical(
+                                                  bottom: Radius.circular(30))
+                                              : BorderRadius.circular(30),
+                                      child: Icon(
+                                        Icons.gif,
+                                        color: Colors.white,
+                                        size: 40,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // CircleAvatar(
+                                //   backgroundColor: Colors.redAccent,
+                                //   radius: 20,
+                                //   child: Icon(Icons.gif),
+                                // ),
+                                // SizedBox(
+                                //   width: 5,
+                                // ),
+                                Padding(
+                                  padding: messageGetX.socialExpanded.value
+                                      ? EdgeInsets.only(
+                                          bottom: 5, left: 5, right: 5)
+                                      : const EdgeInsets.all(5),
+                                  child: Material(
+                                    borderRadius:
+                                        messageGetX.socialExpanded.value
+                                            ? BorderRadius.vertical(
+                                                bottom: Radius.circular(30))
+                                            : BorderRadius.circular(30),
+                                    color: Colors.green,
+                                    child: InkWell(
+                                      onTap: () {
+                                        messageGetX.expandGif(false);
+                                        messageGetX.expandWords(false);
+                                        messageGetX.expandPhoto(false);
+                                        messageGetX.expandSocial(
+                                            !messageGetX.socialExpanded.value);
+                                      },
+                                      borderRadius:
+                                          messageGetX.socialExpanded.value
+                                              ? BorderRadius.vertical(
+                                                  bottom: Radius.circular(30))
+                                              : BorderRadius.circular(30),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(7.5),
+                                        child: Icon(
+                                          Icons.contact_page_outlined,
+                                          color: Colors.white,
+                                          size: 25,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // SizedBox(
+                                //   width: 5,
+                                // ),
+                                Padding(
+                                  padding: messageGetX.photoExpanded.value
+                                      ? EdgeInsets.only(
+                                          bottom: 5, left: 5, right: 5)
+                                      : const EdgeInsets.all(5),
+                                  child: Material(
+                                    borderRadius:
+                                        messageGetX.photoExpanded.value
+                                            ? BorderRadius.vertical(
+                                                bottom: Radius.circular(30))
+                                            : BorderRadius.circular(30),
+                                    color: Colors.orange,
+                                    child: InkWell(
+                                      onTap: () {
+                                        messageGetX.expandGif(false);
+                                        messageGetX.expandWords(false);
+                                        messageGetX.expandSocial(false);
+                                        messageGetX.expandPhoto(
+                                            !messageGetX.photoExpanded.value);
+                                      },
+                                      borderRadius:
+                                          messageGetX.photoExpanded.value
+                                              ? BorderRadius.vertical(
+                                                  bottom: Radius.circular(30))
+                                              : BorderRadius.circular(30),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(7.5),
+                                        child: Icon(
+                                          Icons.image_outlined,
+                                          color: Colors.white,
+                                          size: 25,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: messageGetX.wordsExpanded.value
+                                      ? EdgeInsets.only(
+                                          bottom: 5, left: 5, right: 5)
+                                      : const EdgeInsets.all(5),
+                                  child: Material(
+                                    borderRadius:
+                                        messageGetX.wordsExpanded.value
+                                            ? BorderRadius.vertical(
+                                                bottom: Radius.circular(30))
+                                            : BorderRadius.circular(30),
+                                    color: Colors.purple,
+                                    child: InkWell(
+                                      onTap: () {
+                                        messageGetX.expandSocial(false);
+                                        messageGetX.expandGif(false);
+                                        messageGetX.expandPhoto(false);
+                                        messageGetX.expandWords(
+                                            !messageGetX.wordsExpanded.value);
+                                      },
+                                      borderRadius:
+                                          messageGetX.wordsExpanded.value
+                                              ? BorderRadius.vertical(
+                                                  bottom: Radius.circular(30))
+                                              : BorderRadius.circular(30),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(7.5),
+                                        child: Icon(
+                                          Icons.create_outlined,
+                                          color: Colors.white,
+                                          size: 25,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Obx(
+                            () => Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(0),
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Row(
                                   children: [
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Padding(
-                                      padding: messageGetX.gifExpanded.value
-                                          ? EdgeInsets.only(
-                                              bottom: 5, left: 5, right: 5)
-                                          : const EdgeInsets.all(5),
-                                      child: Material(
-                                        borderRadius:
+                                    Expanded(
+                                        child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 10,
+                                          left: 0,
+                                          top: 0,
+                                          bottom: 5),
+                                      child: TextField(
+                                        minLines: 1,
+                                        maxLines: messageGetX.gifExpanded.value
+                                            ? 1
+                                            : 5,
+                                        onChanged: (text) {
+                                          messageGetX.query.value = text;
+                                        },
+                                        controller:
                                             messageGetX.gifExpanded.value
-                                                ? BorderRadius.vertical(
-                                                    bottom: Radius.circular(30))
-                                                : BorderRadius.circular(30),
-                                        color: Colors.redAccent,
-                                        child: InkWell(
-                                          onTap: () {
-                                            messageGetX.expandSocial(false);
-                                            messageGetX.expandWords(false);
-                                            messageGetX.expandPhoto(false);
-                                            messageGetX.expandGif(
-                                                !messageGetX.gifExpanded.value);
-                                          },
-                                          borderRadius: messageGetX
-                                                  .gifExpanded.value
-                                              ? BorderRadius.vertical(
-                                                  bottom: Radius.circular(30))
-                                              : BorderRadius.circular(30),
-                                          child: Icon(
-                                            Icons.gif,
-                                            color: Colors.white,
-                                            size: 40,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    // CircleAvatar(
-                                    //   backgroundColor: Colors.redAccent,
-                                    //   radius: 20,
-                                    //   child: Icon(Icons.gif),
-                                    // ),
-                                    // SizedBox(
-                                    //   width: 5,
-                                    // ),
-                                    Padding(
-                                      padding: messageGetX.socialExpanded.value
-                                          ? EdgeInsets.only(
-                                              bottom: 5, left: 5, right: 5)
-                                          : const EdgeInsets.all(5),
-                                      child: Material(
-                                        borderRadius:
-                                            messageGetX.socialExpanded.value
-                                                ? BorderRadius.vertical(
-                                                    bottom: Radius.circular(30))
-                                                : BorderRadius.circular(30),
-                                        color: Colors.green,
-                                        child: InkWell(
-                                          onTap: () {
-                                            messageGetX.expandGif(false);
-                                            messageGetX.expandWords(false);
-                                            messageGetX.expandPhoto(false);
-                                            messageGetX.expandSocial(
-                                                !messageGetX
-                                                    .socialExpanded.value);
-                                          },
-                                          borderRadius: messageGetX
-                                                  .socialExpanded.value
-                                              ? BorderRadius.vertical(
-                                                  bottom: Radius.circular(30))
-                                              : BorderRadius.circular(30),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(7.5),
-                                            child: Icon(
-                                              Icons.contact_page_outlined,
-                                              color: Colors.white,
-                                              size: 25,
+                                                ? messageGetX.gif
+                                                : messageGetX.message,
+                                        cursorColor: context.isDarkMode
+                                            ? Colors.white.withOpacity(0.8)
+                                            : Colors.grey[900],
+                                        scrollPadding: EdgeInsets.zero,
+                                        decoration: InputDecoration(
+                                            hintMaxLines: 1,
+                                            helperMaxLines: 1,
+                                            suffixIcon: GestureDetector(
+                                              onTap: () {
+                                                List<String> temp =
+                                                    Utils.words.toList();
+                                                int index = Random()
+                                                    .nextInt(temp.length - 1);
+                                                messageGetX.message.text =
+                                                    temp[index];
+                                              },
+                                              child: Icon(
+                                                Icons.shuffle_rounded,
+                                                color: context.isDarkMode
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                              ),
                                             ),
-                                          ),
-                                        ),
+                                            hintText:
+                                                messageGetX.gifExpanded.value
+                                                    ? "Tenor'da gif arayın"
+                                                    : 'Mesaj girin',
+                                            focusColor: Colors.black,
+                                            isDense: true,
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: context.isDarkMode
+                                                        ? Colors.white
+                                                            .withOpacity(0.95)
+                                                        : Colors.black,
+                                                    width: 2),
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                gapPadding: 0),
+                                            border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: context.isDarkMode
+                                                        ? Colors.white
+                                                            .withOpacity(0.5)
+                                                        : Colors.black,
+                                                    width: 2),
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                gapPadding: 0)),
                                       ),
-                                    ),
-                                    // SizedBox(
-                                    //   width: 5,
-                                    // ),
-                                    Padding(
-                                      padding: messageGetX.photoExpanded.value
-                                          ? EdgeInsets.only(
-                                              bottom: 5, left: 5, right: 5)
-                                          : const EdgeInsets.all(5),
-                                      child: Material(
-                                        borderRadius:
-                                            messageGetX.photoExpanded.value
-                                                ? BorderRadius.vertical(
-                                                    bottom: Radius.circular(30))
-                                                : BorderRadius.circular(30),
-                                        color: Colors.orange,
-                                        child: InkWell(
-                                          onTap: () {
-                                            messageGetX.expandGif(false);
-                                            messageGetX.expandWords(false);
-                                            messageGetX.expandSocial(false);
-                                            messageGetX.expandPhoto(!messageGetX
-                                                .photoExpanded.value);
-                                          },
-                                          borderRadius: messageGetX
-                                                  .photoExpanded.value
-                                              ? BorderRadius.vertical(
-                                                  bottom: Radius.circular(30))
-                                              : BorderRadius.circular(30),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(7.5),
-                                            child: Icon(
-                                              Icons.image_outlined,
-                                              color: Colors.white,
-                                              size: 25,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: messageGetX.wordsExpanded.value
-                                          ? EdgeInsets.only(
-                                              bottom: 5, left: 5, right: 5)
-                                          : const EdgeInsets.all(5),
-                                      child: Material(
-                                        borderRadius:
-                                            messageGetX.wordsExpanded.value
-                                                ? BorderRadius.vertical(
-                                                    bottom: Radius.circular(30))
-                                                : BorderRadius.circular(30),
-                                        color: Colors.purple,
-                                        child: InkWell(
-                                          onTap: () {
-                                            messageGetX.expandSocial(false);
-                                            messageGetX.expandGif(false);
-                                            messageGetX.expandPhoto(false);
-                                            messageGetX.expandWords(!messageGetX
-                                                .wordsExpanded.value);
-                                          },
-                                          borderRadius: messageGetX
-                                                  .wordsExpanded.value
-                                              ? BorderRadius.vertical(
-                                                  bottom: Radius.circular(30))
-                                              : BorderRadius.circular(30),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(7.5),
-                                            child: Icon(
-                                              Icons.create_outlined,
-                                              color: Colors.white,
-                                              size: 25,
-                                            ),
-                                          ),
+                                    )),
+                                    Material(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: Colors.blue,
+                                      child: InkWell(
+                                        onTap: messageGetX.gifExpanded.value
+                                            ? () {
+                                                messageGetX.search.value =
+                                                    messageGetX.query.value;
+                                              }
+                                            : () async {
+                                                if (messageGetX.message.text
+                                                    .trim()
+                                                    .isEmpty) {
+                                                  return;
+                                                }
+                                                String content =
+                                                    messageGetX.message.text;
+                                                messageGetX.message.text = '';
+                                                await firebaseApi.firestore
+                                                    .collection('Pairs')
+                                                    .doc(widget.pairId)
+                                                    .update({
+                                                  'hasMessage': true,
+                                                  'lastDate': DateTime.now(),
+                                                  'new': true,
+                                                  'lastSender': firebaseApi
+                                                      .auth.currentUser!.uid,
+                                                  'lastName':
+                                                      infosGetx.name.value,
+                                                  'lastMessage': content
+                                                });
+                                                await firebaseApi.firestore
+                                                    .collection('Pairs')
+                                                    .doc(widget.pairId)
+                                                    .collection('Messages')
+                                                    .add({
+                                                  'content': content,
+                                                  'isText': true,
+                                                  'isSocial': false,
+                                                  'socialName': '',
+                                                  'launch': '',
+                                                  'photoLink': '',
+                                                  'from': firebaseApi
+                                                      .auth.currentUser!.uid,
+                                                  'date': DateTime.now()
+                                                });
+                                              },
+                                        borderRadius: BorderRadius.circular(30),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: messageGetX.gifExpanded.value
+                                              ? Icon(
+                                                  Icons.search,
+                                                  size: 30,
+                                                  color: Colors.white,
+                                                )
+                                              : RotatedBox(
+                                                  quarterTurns: 1,
+                                                  child: Icon(
+                                                    Icons.navigation_rounded,
+                                                    size: 30,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
                                         ),
                                       ),
                                     ),
@@ -2938,162 +3036,11 @@ class _MessageState extends State<Message> {
                                 ),
                               ),
                             ),
-                            Obx(
-                              () => Container(
-                                height: 72.1,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            right: 10,
-                                            left: 0,
-                                            top: 10,
-                                            bottom: 10),
-                                        child: TextField(
-                                          maxLines:
-                                              messageGetX.gifExpanded.value
-                                                  ? 1
-                                                  : 5,
-                                          onChanged: (text) {
-                                            messageGetX.query.value = text;
-                                          },
-                                          controller:
-                                              messageGetX.gifExpanded.value
-                                                  ? messageGetX.gif
-                                                  : messageGetX.message,
-                                          cursorColor: context.isDarkMode
-                                              ? Colors.white.withOpacity(0.8)
-                                              : Colors.grey[900],
-                                          scrollPadding: EdgeInsets.all(0),
-                                          decoration: InputDecoration(
-                                              hintMaxLines: 1,
-                                              helperMaxLines: 1,
-                                              suffixIcon: GestureDetector(
-                                                onTap: () {
-                                                  List<String> temp =
-                                                      Utils.words.toList();
-                                                  int index = Random()
-                                                      .nextInt(temp.length - 1);
-                                                  messageGetX.message.text =
-                                                      temp[index];
-                                                },
-                                                child: Icon(
-                                                  Icons.shuffle_rounded,
-                                                  color: context.isDarkMode
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                              ),
-                                              hintText:
-                                                  messageGetX.gifExpanded.value
-                                                      ? "Tenor'da gif arayın"
-                                                      : 'Mesaj girin',
-                                              focusColor: Colors.black,
-                                              isDense: true,
-                                              focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: context.isDarkMode
-                                                          ? Colors.white
-                                                              .withOpacity(0.95)
-                                                          : Colors.black,
-                                                      width: 2),
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-                                                  gapPadding: 0),
-                                              border: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: context.isDarkMode
-                                                          ? Colors.white
-                                                              .withOpacity(0.5)
-                                                          : Colors.black,
-                                                      width: 2),
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-                                                  gapPadding: 0)),
-                                        ),
-                                      )),
-                                      Material(
-                                        borderRadius: BorderRadius.circular(30),
-                                        color: Colors.blue,
-                                        child: InkWell(
-                                          onTap: messageGetX.gifExpanded.value
-                                              ? () {
-                                                  messageGetX.search.value =
-                                                      messageGetX.query.value;
-                                                }
-                                              : () async {
-                                                  if (messageGetX.message.text
-                                                      .trim()
-                                                      .isEmpty) {
-                                                    return;
-                                                  }
-                                                  String content =
-                                                      messageGetX.message.text;
-                                                  messageGetX.message.text = '';
-                                                  await firebaseApi.firestore
-                                                      .collection('Pairs')
-                                                      .doc(widget.pairId)
-                                                      .update({
-                                                    'hasMessage': true,
-                                                    'lastDate': DateTime.now(),
-                                                    'new': true,
-                                                    'lastSender': firebaseApi
-                                                        .auth.currentUser!.uid,
-                                                    'lastName':
-                                                        infosGetx.name.value,
-                                                    'lastMessage': content
-                                                  });
-                                                  await firebaseApi.firestore
-                                                      .collection('Pairs')
-                                                      .doc(widget.pairId)
-                                                      .collection('Messages')
-                                                      .add({
-                                                    'content': content,
-                                                    'isText': true,
-                                                    'isSocial': false,
-                                                    'socialName': '',
-                                                    'launch': '',
-                                                    'photoLink': '',
-                                                    'from': firebaseApi
-                                                        .auth.currentUser!.uid,
-                                                    'date': DateTime.now()
-                                                  });
-                                                },
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: messageGetX.gifExpanded.value
-                                                ? Icon(
-                                                    Icons.search,
-                                                    size: 30,
-                                                    color: Colors.white,
-                                                  )
-                                                : RotatedBox(
-                                                    quarterTurns: 1,
-                                                    child: Icon(
-                                                      Icons.navigation_rounded,
-                                                      size: 30,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: padding,
-                            )
-                          ],
-                        ),
+                          ),
+                          SizedBox(
+                            height: padding,
+                          )
+                        ],
                       ),
                     ),
                   ),

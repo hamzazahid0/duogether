@@ -239,7 +239,7 @@ class _SecondState extends State<Second> {
                                                     firebaseApi.country.value),
                                                 builder: (context, snapshot) {
                                                   return snapshot.hasData
-                                                      ? ListView.builder(
+                                                      ? ListView.builder( 
                                                           padding:
                                                               EdgeInsets.zero,
                                                           physics:
@@ -917,7 +917,7 @@ class _SecondState extends State<Second> {
                             ),
                             Text('Lütfen konum girin',
                                 style: GoogleFonts.roboto(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.red[800])),
                             SizedBox(

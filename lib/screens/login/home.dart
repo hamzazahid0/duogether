@@ -4,6 +4,7 @@ import 'package:gamehub/api/firebase.dart';
 import 'package:gamehub/screens/resetPass.dart';
 import 'package:gamehub/screens/terms.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginHome extends StatefulWidget {
@@ -48,34 +49,30 @@ class _LoginHomeState extends State<LoginHome> {
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 70, right: 80, left: 80),
+                  padding: const EdgeInsets.only(top: 50, right: 80, left: 80),
                   child: SingleChildScrollView(
                     physics: BouncingScrollPhysics(),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        MediaQuery.of(context).size.height < 600
-                            ? Container()
-                            : Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 30),
-                                child: Image.asset('assets/orta.png'),
-                              ),
-                        MediaQuery.of(context).size.height < 600
-                            ? Container()
-                            : SizedBox(
-                                height: 20,
-                              ),
-                        MediaQuery.of(context).size.height < 600
-                            ? Container()
-                            : Text(
-                                "Duogether'a\nhoş geldin",
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.roboto(
-                                    fontSize: 28, fontWeight: FontWeight.bold),
-                              ),
                         SizedBox(
-                          height: 15,
+                          width: 85,
+                          height: 85,
+                          child: Image.asset(
+                            'assets/orta.png',
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          "Duogether'a\nhoş geldin",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.roboto(
+                              fontSize: 26, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
                         RichText(
                             textAlign: TextAlign.center,
@@ -142,7 +139,7 @@ class _LoginHomeState extends State<LoginHome> {
                     end: Alignment.topCenter),
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
                 child: Column(
@@ -166,12 +163,13 @@ class _LoginHomeState extends State<LoginHome> {
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(30),
                                 onTap: () async {
-                                  var success =
-                                      await firebaseApi.signInWithGoogle();
-                                  if (success) {
+                                  await firebaseApi
+                                      .signInWithGoogle()
+                                      .then((value) {
                                     firebaseApi.loading.value = false;
+                                    GetStorage().write("signMethod", "google");
                                     widget.controller.jumpToPage(3);
-                                  }
+                                  });
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(10),
@@ -200,6 +198,7 @@ class _LoginHomeState extends State<LoginHome> {
                                     await firebaseApi.signInWithFacebook();
                                 if (success) {
                                   firebaseApi.loading.value = false;
+                                  GetStorage().write("signMethod", "facebook");
                                   widget.controller.jumpToPage(3);
                                 }
                               },
@@ -232,6 +231,8 @@ class _LoginHomeState extends State<LoginHome> {
                                             await firebaseApi.signInWithApple();
                                         if (success) {
                                           firebaseApi.loading.value = false;
+                                          GetStorage()
+                                              .write("signMethod", "apple");
                                           widget.controller.jumpToPage(3);
                                         }
                                       },
@@ -253,7 +254,7 @@ class _LoginHomeState extends State<LoginHome> {
                       ],
                     ),
                     SizedBox(
-                      height: 12,
+                      height: 10,
                     ),
                     // Text(
                     //   'Giriş yapın',
@@ -375,6 +376,9 @@ class _LoginHomeState extends State<LoginHome> {
                               return;
                             }
                             firebaseApi.loginWithEmail(email.text, pass.text);
+                            GetStorage().write("signMethod", "email");
+                            GetStorage().write("email", email.text);
+                            GetStorage().write("pass", pass.text);
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(14),
@@ -388,7 +392,7 @@ class _LoginHomeState extends State<LoginHome> {
                                     : Text(
                                         'Giriş yap',
                                         style: GoogleFonts.roboto(
-                                            fontSize: 20,
+                                            fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white),
                                       )

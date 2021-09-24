@@ -7,10 +7,9 @@ import 'package:gamehub/getx/cardsGetx.dart';
 import 'package:gamehub/getx/filterGetx.dart';
 import 'package:gamehub/screens/filter.dart';
 import 'package:gamehub/screens/paired.dart';
-import 'package:gamehub/utils/utils.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:tcard/tcard.dart';
 
 class Connect extends StatefulWidget {
@@ -96,7 +95,7 @@ class _ConnectState extends State<Connect> {
                                                                     .data()![
                                                                 'avatar']),
                                                       ),
-                                                SizedBox(
+                                               const SizedBox(
                                                   height: 20,
                                                 ),
                                                 Padding(
@@ -257,22 +256,9 @@ class _ConnectState extends State<Connect> {
       body: Obx(
         () => Container(
             color: context.isDarkMode ? Colors.black : Colors.white,
-            // decoration: context.isDarkMode
-            //     ? BoxDecoration(color: Colors.black)
-            //     : BoxDecoration(
-            //         gradient: LinearGradient(colors: [
-            //         Color(0xFFffffff), Color(0xFFdfe9f3),
-            //         // Colors.grey.withOpacity(0.15),
-            //         // Colors.grey.withOpacity(0.10),
-            //         // Colors.grey.withOpacity(0.05),
-            //       ], begin: Alignment.bottomCenter, end: Alignment.topCenter)
-            //         // gradient: LinearGradient(
-            //         //     colors: [Color(0xff37474f), Colors.blueGrey],
-            //         //     end: Alignment.bottomCenter,
-            //         //     begin: Alignment.topCenter)
-            //         ),
             child: cardsGetx.ended.value || cardsGetx.limit.value == 0
-                ? cardsGetx.more.value
+                ? !cardsGetx.getBoughtExtraLimit &&
+                        filterGetx.game.value == 'Oyun seçin'
                     ? Center(
                         child: Padding(
                           padding: const EdgeInsets.all(20),
@@ -291,11 +277,11 @@ class _ConnectState extends State<Connect> {
                                 height: 7,
                               ),
                               Text(
-                                'Kaydırabileceğin Duo profili kalmadı',
+                                'Günlük kaydırma kaydırma hakkınız doldu',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.roboto(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 30,
+                                    fontSize: 25,
                                     color: context.isDarkMode
                                         ? Colors.white
                                         : Colors.black),
@@ -308,25 +294,15 @@ class _ConnectState extends State<Connect> {
                                 borderRadius: BorderRadius.circular(40),
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(40),
-                                  onTap: () {
-                                    RewardedAd.load(
-                                        adUnitId: Utils.ad_id,
-                                        request: AdRequest(),
-                                        rewardedAdLoadCallback:
-                                            RewardedAdLoadCallback(
-                                                onAdLoaded: (add) {
-                                                  add.show(onUserEarnedReward:
-                                                      (add, item) {
-                                                    //give reward
-                                                    cardsGetx.limit.value = 10;
-                                                    filterGetx.generateCard();
-                                                    cardsGetx.ended.value =
-                                                        false;
-                                                    cardsGetx.more.value =
-                                                        false;
-                                                  });
-                                                },
-                                                onAdFailedToLoad: (add) {}));
+                                  onTap: () async {
+                                    firebaseApi.showAd(cardsGetx, () {
+                                      cardsGetx.limit.value = 20;
+                                      filterGetx.generateCard();
+                                      cardsGetx.ended.value = false;
+                                      cardsGetx.more.value = true;
+                                      cardsGetx.setBoughtExtraLimit= true;
+                                      GetStorage().write("boughtExtra", true);
+                                    });
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -374,11 +350,13 @@ class _ConnectState extends State<Connect> {
                                 height: 7,
                               ),
                               Text(
-                                'Kaydırabileceğin Duo profili kalmadı',
+                                filterGetx.game.value == "Oyun seçin"
+                                    ? 'Kaydırabileceğin Duo profili kalmadı'
+                                    : "Bu özelliklere sahip oyuncu kalmadı.",
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.roboto(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 30,
+                                    fontSize: 25,
                                     color: context.isDarkMode
                                         ? Colors.white
                                         : Colors.black),
@@ -387,90 +365,11 @@ class _ConnectState extends State<Connect> {
                           ),
                         ),
                       )
-                :
-                // FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                // future: filterGetx.filtered.value
-                //     ? firebaseApi.firestore
-                //         .collection('Users')
-                //         .where('finished', isEqualTo: true)
-                //         // .where('ids',
-                //         //     arrayContains: firebaseApi.auth.currentUser!.uid)
-                //         .where('id',
-                //             isNotEqualTo: firebaseApi.auth.currentUser!.uid)
-                //         // .limit(cardsGetx.limit.value)
-                //         .get()
-                //     // firebaseApi.firestore
-                //     //     .collection('Users')
-                //     //     .where('finished', isEqualTo: true)
-                //     //     // .where('ids',
-                //     //     //     arrayContains: firebaseApi.auth.currentUser!.uid)
-                //     //     .where('id',
-                //     //         isNotEqualTo: firebaseApi.auth.currentUser!.uid)
-                //     //     .where('age',
-                //     //         isGreaterThanOrEqualTo: double.parse(
-                //     //                 filterGetx.age.value.start.toString())
-                //     //             .round())
-                //     //     .where('age',
-                //     //         isLessThanOrEqualTo: double.parse(
-                //     //                 filterGetx.age.value.end.toString())
-                //     //             .round())
-                //     //     .where('sex', isEqualTo: filterGetx.sex.value)
-                //     //     .limit(cardsGetx.limit.value)
-                //     //     .get()
-                //     : firebaseApi.firestore
-                //         .collection('Users')
-                //         .where('finished', isEqualTo: true)
-                //         // .where('ids',
-                //         //     arrayContains: firebaseApi.auth.currentUser!.uid)
-                //         .where('id',
-                //             isNotEqualTo: firebaseApi.auth.currentUser!.uid)
-                //         // .limit(cardsGetx.limit.value)
-                //         .get(),
-                // builder: (context, snapshot) {
-                // if (snapshot.hasData) {
-                //   list = snapshot.data!.docs.toList();
-                //   list.removeWhere((element) {
-                //     List<dynamic> map = element.data()['ids'];
-                //     if (map.contains(firebaseApi.auth.currentUser!.uid)) {
-                //       return true;
-                //     } else {
-                //       return false;
-                //     }
-                //   });
-                //   if (filterGetx.filtered.value) {
-                //     list.removeWhere((element) {
-                //       if (element.data()['age'] >=
-                //           double.parse(
-                //                   filterGetx.age.value.start.toString())
-                //               .round()) return false;
-                //       if (element.data()['age'] <=
-                //           double.parse(filterGetx.age.value.end.toString())
-                //               .round()) return false;
-                //       if (element.data()['sex'] == filterGetx.sex.value)
-                //         return false;
-                //       else {
-                //         return true;
-                //       }
-                //     });
-                //   }
-                // list.forEach((element) {
-                //   List<dynamic> map = element.data()['ids'];
-                //   print(map);
-                //   if (map.contains(firebaseApi.auth.currentUser!.uid)) {
-                //     print('yes');
-                //     bool a = list.remove(element);
-                //     print(a);
-                //   }
-                // });
-                // }
-                // return snapshot.hasData
-                //     ?
-                filterGetx.cards.length != 0
+                : filterGetx.cards.length != 0
                     ? Stack(
                         children: [
                           Padding(
-                            padding:
-                                EdgeInsets.fromLTRB(0, 45 + padding, 0, 40),
+                            padding: EdgeInsets.fromLTRB(0, 45 + padding, 0, 0),
                             child: Builder(
                               builder: (context) {
                                 // if (controller.state != null) {
@@ -484,12 +383,23 @@ class _ConnectState extends State<Connect> {
                                   controller: controller,
                                   onForward: (index, info) async {
                                     int index = controller.index - 1;
+                                    print("index : $index");
                                     if (index == 6 ||
                                         index == 11 ||
                                         index == 17) {
+                                      print("reklam");
                                       return;
                                     }
-                                    cardsGetx.limit.value--;
+                                    cardsGetx.decreaseLimit();
+                                    List beforeSeenIds =
+                                        GetStorage().read("seenIds") ?? [];
+
+                                    beforeSeenIds
+                                        .add(filterGetx.list.value[index].id);
+                                    GetStorage()
+                                        .write("seenIds", beforeSeenIds);
+                                    print("before : $beforeSeenIds");
+
                                     firebaseApi.firestore
                                         .collection('Users')
                                         .doc(firebaseApi.auth.currentUser!.uid)
@@ -587,25 +497,16 @@ class _ConnectState extends State<Connect> {
                                     cardsGetx.ended.value = true;
                                   },
                                   lockYAxis: true,
-                                  delaySlideFor: 400, slideSpeed: 15,
+                                  delaySlideFor: 400,
+                                  slideSpeed: 15,
                                   cards: filterGetx.cards,
-                                  // cards: List.generate(
-                                  //     list.length, (index) => card(list[index].id),
-                                  //     growable: true),
-                                  // cards: [
-                                  //   card(),
-                                  //   card(),
-                                  //   card(),
-                                  //   card(),
-                                  //   card(),
-                                  //   card()
-                                  // ],
-                                  size: MediaQuery.of(context).size,
+                                  size: Get.size,
                                 );
                               },
                             ),
                           ),
                           Positioned(
+                            //! alttaki onay butonları
                             bottom: 8,
                             right: 0,
                             left: 0,
@@ -792,11 +693,13 @@ class _ConnectState extends State<Connect> {
                                 height: 7,
                               ),
                               Text(
-                                'Kaydırabileceğin Duo profili kalmadı',
+                                filterGetx.game.value == "Oyun seçin"
+                                    ? 'Kaydırabileceğin Duo profili kalmadı'
+                                    : "Bu özelliklere sahip oyuncu kalmadı",
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.roboto(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 30,
+                                    fontSize: 25,
                                     color: context.isDarkMode
                                         ? Colors.white
                                         : Colors.black),
@@ -804,11 +707,7 @@ class _ConnectState extends State<Connect> {
                             ],
                           ),
                         ),
-                      )
-            // : Center(child: CircularPercentIndicator(radius: 50));
-            // }
-            // ),
-            ),
+                      )),
       ),
     );
   }

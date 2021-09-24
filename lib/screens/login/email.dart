@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gamehub/api/firebase.dart';
 import 'package:gamehub/screens/terms.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterEmail extends StatefulWidget {
@@ -51,35 +52,27 @@ class _RegisterEmailState extends State<RegisterEmail> {
                     alignment: Alignment.topCenter,
                     child: Padding(
                       padding:
-                          const EdgeInsets.only(top: 80, right: 80, left: 80),
+                          const EdgeInsets.only(top: 40, right: 80, left: 80),
                       child: SingleChildScrollView(
                         physics: BouncingScrollPhysics(),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            MediaQuery.of(context).size.height < 600
-                                ? Container()
-                                : Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 30),
-                                    child: Image.asset('assets/orta.png'),
-                                  ),
-                            MediaQuery.of(context).size.height < 600
-                                ? Container()
-                                : SizedBox(
-                                    height: 20,
-                                  ),
-                            MediaQuery.of(context).size.height < 600
-                                ? Container()
-                                : Text(
-                                    "Duogether'a\nhoş geldin",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.roboto(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold),
-                                  ),
                             SizedBox(
-                              height: 15,
+                                width: 85,
+                                height: 85,
+                                child: Image.asset('assets/orta.png')),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "Duogether'a\nhoş geldin",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.roboto(
+                                  fontSize: 27, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 10,
                             ),
                             RichText(
                                 textAlign: TextAlign.center,
@@ -119,13 +112,7 @@ class _RegisterEmailState extends State<RegisterEmail> {
                                           color: context.isDarkMode
                                               ? Colors.white
                                               : Colors.black)),
-                                ])
-                                // '  ve hizmet şartlarını kabul ediyorsunuz',
-                                // style: TextStyle(
-                                //   fontSize: 13,
-                                // ),
-                                // textAlign: TextAlign.center,
-                                )
+                                ]))
                           ],
                         ),
                       ),
@@ -317,6 +304,9 @@ class _RegisterEmailState extends State<RegisterEmail> {
                                             email.text, pass1.text, pass2.text);
                                     if (success) {
                                       firebaseApi.loading.value = false;
+                                      GetStorage().write("email", email.text);
+                                      GetStorage().write("pass", pass1.text);
+                                      GetStorage().write("signMethod", "email");
                                       widget.controller.jumpToPage(3);
                                     } else {
                                       firebaseApi.loading.value = false;

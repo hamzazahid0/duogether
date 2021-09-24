@@ -5,10 +5,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:gamehub/api/google_sign_helper.dart';
 import 'package:gamehub/getx/cardsGetx.dart';
 import 'package:gamehub/getx/editProfileGetx.dart';
 import 'package:gamehub/getx/infosGetx.dart';
 import 'package:gamehub/getx/mainGetx.dart';
+import 'package:gamehub/model/user_profile.dart';
+import 'package:gamehub/screens/userprofile.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:gamehub/getx/searchGameGetx.dart';
@@ -17,6 +22,7 @@ import 'package:gamehub/screens/login.dart';
 import 'package:gamehub/screens/main.dart';
 import 'package:gamehub/utils/utils.dart';
 import 'package:get/get.dart';
+import 'package:turkish/turkish.dart';
 import 'package:uuid/uuid.dart';
 // import 'package:flutter_login_facebook/flutter_login_facebook.dart' as fb;
 
@@ -90,6 +96,42 @@ class FirebaseApi extends GetxController {
   var endHour = 00.obs;
   var endMinute = 00.obs;
   //
+  //UserProfile
+  var userProfile = Profil(
+    userId: "userId",
+    showLocation: false,
+    country: "Türkiye",
+    name: "",
+    age: 0,
+    hasBack: false,
+    back: "",
+    city: "",
+    level: 0,
+    bio: "",
+    startHour: 0,
+    avatar: "",
+    avatarIsAsset: true,
+    cover: 0,
+    endHour: 0,
+    endMinute: 0,
+    headphone: false,
+    mobile: false,
+    pc: false,
+    ps: false,
+    startMinute: 0,
+    limit: 2,
+  ).obs;
+
+  Future<void> getUserProfileDatas() async {
+    await firestore
+        .collection("Users")
+        .doc(auth.currentUser?.uid)
+        .get()
+        .then((value) {
+      userProfile.value = Profil.fromJson(value.id, value.data()!);
+    });
+  }
+//
   // Games
 
   void chechToQuestion() {
@@ -151,6 +193,7 @@ class FirebaseApi extends GetxController {
     // games.clear();
   }
 
+  var citiesList = [];
   Future<List<String>> getCities(String country) async {
     List<String> cities = [];
     var ids = await firestore
@@ -168,9 +211,9 @@ class FirebaseApi extends GetxController {
         .get();
 
     city.docs.forEach((element) {
-      print(element.id);
       cities.add(element.data()['name']);
     });
+    cities..sort(turkish.comparatorIgnoreCase);
 
     return cities;
   }
@@ -560,6 +603,8 @@ class FirebaseApi extends GetxController {
       idToken: appleCredential.identityToken,
       rawNonce: rawNonce,
     );
+    GetStorage().write("appleIdToken", oauthCredential.idToken);
+    GetStorage().write("appleAccessToken", oauthCredential.accessToken);
 
     try {
       var user =
@@ -595,37 +640,52 @@ class FirebaseApi extends GetxController {
   Future<bool> signInWithFacebook() async {
     final InfosGetx infosGetx = Get.find();
     loading.value = true;
-    var result = await FacebookAuth.instance.login();
-    final facebookAuthCredential =
-        FacebookAuthProvider.credential(result.accessToken!.token);
+    var result = await FacebookAuth.instance.login(
+      permissions: [
+        'public_profile',
+        'email',
+        "user_gender",
+        "user_photos",
+      ],
+    );
 
-    try {
-      var user = await FirebaseAuth.instance
-          .signInWithCredential(facebookAuthCredential);
+    if (result.status == LoginStatus.success) {
+      AccessToken accessToken = result.accessToken!;
 
-      var data = await firestore.collection('Users').doc(user.user!.uid).get();
+      final facebookAuthCredential =
+          FacebookAuthProvider.credential(accessToken.token);
+      GetStorage().write("fbAccessToken", accessToken.token);
 
-      if (data.exists) {
-        infosGetx.addInfos(data.data()!['name'], data.data()!['avatar'],
-            data.data()!['age'], data.data()!['avatarIsAsset']);
-        loading.value = false;
-        Get.offAll(() => Main(first: false));
+      try {
+        var user = await FirebaseAuth.instance
+            .signInWithCredential(facebookAuthCredential);
+
+        var data =
+            await firestore.collection('Users').doc(user.user!.uid).get();
+
+        if (data.exists) {
+          infosGetx.addInfos(data.data()!['name'], data.data()!['avatar'],
+              data.data()!['age'], data.data()!['avatarIsAsset']);
+          loading.value = false;
+          Get.offAll(() => Main(first: false));
+          return false;
+        } else {
+          await firestore.collection('Users').doc(user.user!.uid).set({
+            'finished': false,
+            'email': user.user!.email,
+            'id': user.user!.uid,
+            'verified': true,
+            'avatarIsAsset': true,
+            'ids': [''],
+            'avatar': avatar.value,
+          });
+          return true;
+        }
+      } catch (e) {
         return false;
-      } else {
-        await firestore.collection('Users').doc(user.user!.uid).set({
-          'finished': false,
-          'email': user.user!.email,
-          'id': user.user!.uid,
-          'verified': true,
-          'avatarIsAsset': true,
-          'ids': [''],
-          'avatar': avatar.value,
-        });
-        return true;
       }
-    } catch (e) {
-      return false;
     }
+    return false;
 
     // return await FirebaseAuth.instance
     //     .signInWithCredential(facebookAuthCredential);
@@ -658,51 +718,41 @@ class FirebaseApi extends GetxController {
   //   return user;
   // }
 
-  Future<bool> signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     final InfosGetx infosGetx = Get.find();
     loading.value = true;
-    GoogleSignInAccount? googleUser;
-    try {
-      googleUser = await GoogleSignIn().signIn();
-    } catch (e) {
-      print('hahahahahahahah');
-      print(e.toString());
-    }
 
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
+    await GoogleSignHelper.instance.googleSignIn().then((googleUser) async {
+      await GoogleSignHelper.instance.handleSignIn().then((user) async {
+        try {
+          var data = await firestore.collection('Users').doc(user.uid).get();
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    try {
-      var user = await FirebaseAuth.instance.signInWithCredential(credential);
-
-      var data = await firestore.collection('Users').doc(user.user!.uid).get();
-
-      if (data.exists) {
-        infosGetx.addInfos(data.data()!['name'], data.data()!['avatar'],
-            data.data()!['age'], data.data()!['avatarIsAsset']);
-        loading.value = false;
-        Get.offAll(() => Main(first: false));
-        return false;
-      } else {
-        await firestore.collection('Users').doc(user.user!.uid).set({
-          'finished': false,
-          'email': user.user!.email,
-          'id': user.user!.uid,
-          'verified': true,
-          'avatarIsAsset': true,
-          'ids': [''],
-          'avatar': avatar.value,
-        });
-        return true;
-      }
-    } catch (e) {
-      return false;
-    }
+          if (data.exists) {
+            infosGetx.addInfos(data.data()!['name'], data.data()!['avatar'],
+                data.data()!['age'], data.data()!['avatarIsAsset']);
+            loading.value = false;
+            Get.snackbar(
+              "İşlem Başarılı",
+              "Girişini Sağlıyoruz. Lütfen Bekleyiniz...",
+              snackPosition: SnackPosition.BOTTOM,
+            );
+            Get.offAll(() => Main(first: false));
+          } else {
+            await firestore.collection('Users').doc(user.uid).set({
+              'finished': false,
+              'email': user.email,
+              'id': user.uid,
+              'verified': true,
+              'avatarIsAsset': true,
+              'ids': [''],
+              'avatar': avatar.value,
+            });
+          }
+        } catch (e) {
+          print(e.toString());
+        }
+      });
+    });
   }
 
   Future<void> signOut() async {
@@ -724,6 +774,190 @@ class FirebaseApi extends GetxController {
       Get.put(InfosGetx(), permanent: true);
       Get.put(EditProfileGetx(), permanent: true);
       Get.offAll(() => Login());
+    });
+  }
+
+  Future<void> deleteAccountWithEmailPass() async {
+    User user = await auth.currentUser!;
+
+    AuthCredential credential = EmailAuthProvider.credential(
+        email: GetStorage().read("email"), password: GetStorage().read("pass"));
+
+    await user.reauthenticateWithCredential(credential).then((value) async {
+      await firestore
+          .collection("Users")
+          .doc(user.uid)
+          .delete()
+          .then((val) async {
+        await firestore
+            .collection("Pairs")
+            .where("members", arrayContains: user.uid)
+            .get()
+            .then((pairs) {
+          pairs.docs.forEach((element) {
+            element.reference.collection("Messages").get().then((value) {
+              value.docs.forEach((messages) {
+                messages.reference.delete();
+              });
+            });
+            element.reference.delete();
+          });
+        }).then((vollback) {
+          value.user?.delete().then((res) {
+            Get.snackbar("Hesabınız silindi", "İşlem Başarılı");
+            GetStorage().write("seenIds", []);
+            Get.offAll(() => Login());
+          });
+        });
+      });
+    });
+  }
+
+  Future<void> deleteGoogleAccount() async {
+    User user = await auth.currentUser!;
+
+    var credential = GoogleAuthProvider.credential(
+        idToken: GetStorage().read("googleIdToken"),
+        accessToken: GetStorage().read("googleAccessToken"));
+
+    await user.reauthenticateWithCredential(credential).then((value) async {
+      await firestore
+          .collection("Users")
+          .doc(user.uid)
+          .delete()
+          .then((val) async {
+        await firestore
+            .collection("Pairs")
+            .where("members", arrayContains: user.uid)
+            .get()
+            .then((pairs) {
+          pairs.docs.forEach((element) {
+            element.reference.collection("Messages").get().then((value) {
+              value.docs.forEach((messages) {
+                messages.reference.delete();
+              });
+              element.reference.delete();
+            });
+          });
+        }).then((vollback) {
+          value.user?.delete().then((res) {
+            Get.snackbar("Hesabınız silindi", "İşlem Başarılı");
+            GetStorage().write("seenIds", []);
+            Get.offAll(() => Login());
+          });
+        });
+      });
+    });
+  }
+
+  Future<void> deleteFBAccount() async {
+    User user = await auth.currentUser!;
+
+    var credential =
+        FacebookAuthProvider.credential(GetStorage().read("fbAccessToken"));
+
+    //authenticateden silme
+    await user.reauthenticateWithCredential(credential).then((value) async {
+      await firestore
+          .collection("Users")
+          .doc(user.uid)
+          .delete()
+          .then((val) async {
+        await firestore
+            .collection("Pairs")
+            .where("members", arrayContains: user.uid)
+            .get()
+            .then((pairs) {
+          pairs.docs.forEach((element) {
+            element.reference.collection("Messages").get().then((value) {
+              value.docs.forEach((messages) {
+                messages.reference.delete();
+              });
+              element.reference.delete();
+            });
+          });
+        }).then((vollback) {
+          value.user?.delete().then((res) {
+            Get.snackbar("Hesabınız silindi", "İşlem Başarılı");
+            GetStorage().write("seenIds", []);
+            Get.offAll(() => Login());
+          });
+        });
+      });
+    });
+  }
+
+  Future<void> deleteAppleAccount() async {
+    User user = await auth.currentUser!;
+
+    var credential = OAuthProvider("apple.com").credential(
+      idToken: GetStorage().read("appleIdToken"),
+      accessToken: GetStorage().read("appleAccessToken"),
+    );
+
+    //authenticateden silme
+    await user.reauthenticateWithCredential(credential).then((value) async {
+      await firestore
+          .collection("Users")
+          .doc(user.uid)
+          .delete()
+          .then((val) async {
+        await firestore
+            .collection("Pairs")
+            .where("members", arrayContains: user.uid)
+            .get()
+            .then((pairs) {
+          pairs.docs.forEach((element) {
+            element.reference.collection("Messages").get().then((value) {
+              value.docs.forEach((messages) {
+                messages.reference.delete();
+              });
+              element.reference.delete();
+            });
+          });
+        }).then((vollback) {
+          value.user?.delete().then((res) {
+            Get.snackbar("Hesabınız silindi", "İşlem Başarılı");
+            GetStorage().write("seenIds", []);
+            Get.offAll(() => Login());
+          });
+        });
+      });
+    });
+  }
+
+  //reklam işlemleri
+  Future<void> rewardedInit(CardsGetx adProvider) async {
+    await RewardedAd.load(
+        adUnitId: Utils.ad_id,
+        request: AdRequest(),
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
+            onAdLoaded: (RewardedAd ad) {
+              adProvider.rewardedAd = ad;
+            },
+            onAdFailedToLoad: (LoadAdError error) {}));
+  }
+
+  void showAd(CardsGetx adProvider, Function onEarnedReward) {
+    adProvider.rewardedAd?.show(
+        onUserEarnedReward: (RewardedAd ad, RewardItem item) {
+      onEarnedReward();
+    });
+    adProvider.rewardedAd?.fullScreenContentCallback =
+        FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (RewardedAd ad) {
+      ad.dispose();
+      rewardedInit(adProvider);
+    });
+  }
+
+  //son güncel sürümü alma
+  Future<void> getAppVersions(CardsGetx cardsGetx) async {
+    await firestore.collection("versions").doc("android").get().then((value) {
+      cardsGetx.setAndroidVersion(value["version"]);
+    });
+    await firestore.collection("versions").doc("ios").get().then((value) {
+      cardsGetx.setIosVersion(value["version"]);
     });
   }
 }

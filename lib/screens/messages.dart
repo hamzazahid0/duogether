@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gamehub/api/firebase.dart';
+import 'package:gamehub/getx/cardsGetx.dart';
 import 'package:gamehub/getx/filterGetx.dart';
 import 'package:gamehub/screens/message.dart';
 import 'package:gamehub/screens/newLevel.dart';
@@ -9,6 +10,7 @@ import 'package:gamehub/screens/paired.dart';
 import 'package:gamehub/screens/userprofile.dart';
 import 'package:gamehub/utils/utils.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -21,6 +23,7 @@ class Messages extends StatefulWidget {
 class _MessagesState extends State<Messages> {
   FirebaseApi firebaseApi = Get.find();
   FilterGetx filterGetx = Get.find();
+  CardsGetx cardsGetx = Get.find();
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -380,62 +383,6 @@ class _MessagesState extends State<Messages> {
                 ], begin: Alignment.bottomCenter, end: Alignment.topCenter)),
           child: Column(
             children: [
-              // TabBar(
-              //   labelColor: Colors.black,
-              //   indicatorColor: Colors.grey,
-              //   indicatorWeight: 3,
-              //   labelPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 2),
-              //   tabs: [
-              //     Tab(
-              //       iconMargin: EdgeInsets.zero,
-              //       // text: 'Mesajlar',
-              //       child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Container(
-              //             width: 2,
-              //             height: 20,
-              //             color: Colors.transparent,
-              //           ),
-              //           Center(
-              //             child: Text('Mesajlar'),
-              //           ),
-              //           Container(
-              //             width: 2,
-              //             height: 30,
-              //             color: Colors.grey,
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //     // Text('Mesajlar'),
-              //     Tab(
-              //       text: 'Seni beğenenler',
-              //     ),
-              //     Tab(
-              //       iconMargin: EdgeInsets.zero,
-              //       // text: 'Mesajlar',
-              //       child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Container(
-              //             width: 2,
-              //             height: 30,
-              //             color: Colors.grey,
-              //           ),
-              //           Center(
-              //             child: Text('Populer Duolar'),
-              //           ),
-              //           Container(
-              //             width: 2,
-              //             height: 30,
-              //             color: Colors.transparent,
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ],
-              // ),
               Expanded(
                 child: TabBarView(physics: BouncingScrollPhysics(), children: [
                   Container(
@@ -460,7 +407,7 @@ class _MessagesState extends State<Messages> {
                                 stream: firebaseApi.firestore
                                     .collection('Pairs')
                                     .where('paired', isEqualTo: true)
-                                    .where('hasMessage', isEqualTo: false)
+                                    .where("hasMessage", isEqualTo: false)
                                     .where('members',
                                         arrayContains:
                                             firebaseApi.auth.currentUser!.uid)
@@ -470,7 +417,7 @@ class _MessagesState extends State<Messages> {
                                     .snapshots(),
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
-                                    if (snapshot.data!.docs.isNotEmpty) {
+                                    if (snapshot.data!.docs.isNotEmpty ) {
                                       if (firebaseApi.first) {
                                         firebaseApi.first = false;
                                         firebaseApi.firestore
@@ -733,7 +680,7 @@ class _MessagesState extends State<Messages> {
                                               child: Text(
                                                 'Yeni eşleşme yok',
                                                 style: GoogleFonts.roboto(
-                                                    fontSize: 30,
+                                                    fontSize: 25,
                                                     color: context.isDarkMode
                                                         ? Colors.white
                                                         : Colors.grey[700],
@@ -901,12 +848,10 @@ class _MessagesState extends State<Messages> {
                                                                                               radius: 4,
                                                                                               backgroundColor: Colors.red,
                                                                                             )
-                                                                                          : Container()
+                                                                                          : const SizedBox()
                                                                                     ],
                                                                                   ),
-                                                                                  SizedBox(
-                                                                                    height: 4,
-                                                                                  ),
+                                                                                  const SizedBox(height: 4),
                                                                                   Text(snapshot.data!.docs[index].data()['lastMessage'], maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 17, color: context.isDarkMode ? Colors.grey[100] : Colors.grey[900]))
                                                                                 ],
                                                                               ),
@@ -960,6 +905,7 @@ class _MessagesState extends State<Messages> {
                       ],
                     ),
                   ),
+                  //? beğeniler
                   StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                       stream: firebaseApi.firestore
                           .collection('Pairs')
@@ -1016,7 +962,22 @@ class _MessagesState extends State<Messages> {
                                                                     Transition
                                                                         .cupertino);
                                                           } else {
-                                                            RewardedAd.load(
+                                                            firebaseApi.showAd(
+                                                                cardsGetx, () {
+                                                              firebaseApi
+                                                                  .firestore
+                                                                  .collection(
+                                                                      'Pairs')
+                                                                  .doc(snapshot
+                                                                      .data!
+                                                                      .docs[
+                                                                          index]
+                                                                      .id)
+                                                                  .update({
+                                                                'visible': true
+                                                              });
+                                                            });
+                                                            /*    RewardedAd.load(
                                                                 adUnitId:
                                                                     Utils.ad_id,
                                                                 request:
@@ -1035,6 +996,7 @@ class _MessagesState extends State<Messages> {
                                                                         },
                                                                         onAdFailedToLoad:
                                                                             (add) {}));
+                                                         */
                                                           }
                                                         },
                                                         child: Stack(
@@ -1168,11 +1130,11 @@ class _MessagesState extends State<Messages> {
                                                                             onTap:
                                                                                 () async {
                                                                               var data = await firebaseApi.firestore.collection('Pairs').where('from', isEqualTo: user.data!.id).where('to', isEqualTo: firebaseApi.auth.currentUser!.uid).get();
-                                                                              if (data.docs.isNotEmpty) {
+                                                                              /*if (data.docs.isNotEmpty) {
                                                                                 print('Old');
                                                                                 snapshot.data!.docs[index].reference.delete();
                                                                                 return;
-                                                                              }
+                                                                              }*/
                                                                               print('New');
                                                                               await firebaseApi.firestore.collection('Pairs').doc(snapshot.data!.docs[index].id).update({
                                                                                 'paired': true
@@ -1456,9 +1418,15 @@ class _MessagesState extends State<Messages> {
                                   )
                                 : Center(
                                     child: Column(
+                                      mainAxisSize: MainAxisSize.min,
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                              .padding
+                                              .top,
+                                        ),
                                         Image.asset(
                                           'assets/8.png',
                                           height: 80,
@@ -1467,12 +1435,10 @@ class _MessagesState extends State<Messages> {
                                               ? Colors.white
                                               : Colors.grey[900],
                                         ),
-                                        SizedBox(
-                                          height: 7,
-                                        ),
+                                        const SizedBox(height: 7),
                                         Text('Beğeni yok',
                                             style: GoogleFonts.roboto(
-                                                fontSize: 40,
+                                                fontSize: 25,
                                                 fontWeight: FontWeight.bold)),
                                       ],
                                     ),
@@ -1483,14 +1449,16 @@ class _MessagesState extends State<Messages> {
                                     width: 50,
                                     child: CircularProgressIndicator()));
                       }),
+                  //? popüler
                   StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                       stream: firebaseApi.firestore
                           .collection('Users')
+                          .where("id",
+                              whereNotIn: GetStorage().read("likedBefore") ??
+                                  [firebaseApi.auth.currentUser!.uid])
                           .where('finished', isEqualTo: true)
-                          .where('id',
-                              isNotEqualTo: firebaseApi.auth.currentUser!.uid)
                           .where('showInPopular', isEqualTo: true)
-                          .limit(5)
+                          .limit(6)
                           .snapshots(),
                       builder: (context, snapshot) {
                         return snapshot.hasData
@@ -1498,7 +1466,7 @@ class _MessagesState extends State<Messages> {
                                 ? Center(
                                     child: Text('Tekrar yine gelin',
                                         style: GoogleFonts.roboto(
-                                            fontSize: 40,
+                                            fontSize: 25,
                                             fontWeight: FontWeight.bold)),
                                   )
                                 : GridView.builder(
@@ -1719,168 +1687,202 @@ class _MessagesState extends State<Messages> {
                                                     //   ),
                                                     // ),
                                                   ),
-                                                  !ids.contains(firebaseApi.auth
-                                                          .currentUser!.uid)
+                                                  !ids.contains(firebaseApi
+                                                              .auth
+                                                              .currentUser!
+                                                              .uid) &&
+                                                          (GetStorage().read(
+                                                                      "likeCount") ??
+                                                                  1) ==
+                                                              1
                                                       ? Positioned(
                                                           child:
                                                               GestureDetector(
                                                             onTap: () async {
-                                                              QuerySnapshot<
-                                                                  Map<String,
-                                                                      dynamic>> data = await firebaseApi
-                                                                  .firestore
-                                                                  .collection(
-                                                                      'Pairs')
-                                                                  .where('to',
-                                                                      isEqualTo: firebaseApi
+                                                              if ((GetStorage()
+                                                                          .read(
+                                                                              "likeCount") ??
+                                                                      1) ==
+                                                                  1) {
+                                                                GetStorage().write(
+                                                                    "likeCount",
+                                                                    0);
+                                                                List
+                                                                    likedBefore =
+                                                                    GetStorage().read(
+                                                                            "likedBefore") ??
+                                                                        [
+                                                                          firebaseApi
+                                                                              .auth
+                                                                              .currentUser!
+                                                                              .uid
+                                                                        ];
+                                                                if (!likedBefore
+                                                                    .contains(firebaseApi
+                                                                        .auth
+                                                                        .currentUser!
+                                                                        .uid)) {
+                                                                  likedBefore.add(
+                                                                      firebaseApi
                                                                           .auth
                                                                           .currentUser!
-                                                                          .uid)
-                                                                  .where('from',
-                                                                      isEqualTo: snapshot
-                                                                          .data!
-                                                                          .docs[
-                                                                              index]
-                                                                          .id)
-                                                                  .get();
-                                                              if (data.docs
-                                                                  .isNotEmpty) {
-                                                                await firebaseApi
-                                                                    .firestore
-                                                                    .collection(
-                                                                        'Users')
-                                                                    .doc(
-                                                                      snapshot
-                                                                          .data!
-                                                                          .docs[
-                                                                              index]
-                                                                          .id,
-                                                                    )
-                                                                    .update({
-                                                                  'ids': FieldValue
-                                                                      .arrayUnion([
-                                                                    firebaseApi
-                                                                        .auth
-                                                                        .currentUser!
-                                                                        .uid
-                                                                  ])
-                                                                });
-                                                                //eslesdin
-                                                                await firebaseApi
-                                                                    .firestore
-                                                                    .collection(
-                                                                        'Pairs')
-                                                                    .doc(data
-                                                                        .docs
-                                                                        .first
-                                                                        .id)
-                                                                    .update({
-                                                                  'paired': true
-                                                                });
-                                                                filterGetx
-                                                                    .generateCard();
-                                                                Get.to(
-                                                                    () =>
-                                                                        Paired(
-                                                                          name: snapshot
-                                                                              .data!
-                                                                              .docs[index]
-                                                                              .data()['name'],
-                                                                          id: snapshot
-                                                                              .data!
-                                                                              .docs[index]
-                                                                              .id,
-                                                                          avatar: snapshot
-                                                                              .data!
-                                                                              .docs[index]
-                                                                              .data()['avatar'],
-                                                                          avatarIsAsset: snapshot
-                                                                              .data!
-                                                                              .docs[index]
-                                                                              .data()['avatarIsAsset'],
-                                                                          age: snapshot
-                                                                              .data!
-                                                                              .docs[index]
-                                                                              .data()['age'],
-                                                                          pairId: data
-                                                                              .docs
-                                                                              .first
-                                                                              .id,
-                                                                        ),
-                                                                    transition:
-                                                                        Transition
-                                                                            .noTransition);
-                                                                //Get navigate
-                                                              } else {
-                                                                await firebaseApi
-                                                                    .firestore
-                                                                    .collection(
-                                                                        'Users')
-                                                                    .doc(
-                                                                      snapshot
-                                                                          .data!
-                                                                          .docs[
-                                                                              index]
-                                                                          .id,
-                                                                    )
-                                                                    .update({
-                                                                  'ids': FieldValue
-                                                                      .arrayUnion([
-                                                                    firebaseApi
-                                                                        .auth
-                                                                        .currentUser!
-                                                                        .uid
-                                                                  ])
-                                                                });
-                                                                //ilk tiklama
-                                                                await firebaseApi
-                                                                    .firestore
-                                                                    .collection(
-                                                                        'Pairs')
-                                                                    .add({
-                                                                  'paired':
-                                                                      false,
-                                                                  'visible':
-                                                                      false,
-                                                                  'to': snapshot
-                                                                      .data!
-                                                                      .docs[
-                                                                          index]
-                                                                      .id,
-                                                                  'from': firebaseApi
-                                                                      .auth
-                                                                      .currentUser!
-                                                                      .uid,
-                                                                  'hasMessage':
-                                                                      false,
-                                                                  'lastMessage':
-                                                                      '',
-                                                                  firebaseApi
-                                                                      .auth
-                                                                      .currentUser!
-                                                                      .uid: false,
-                                                                  snapshot
-                                                                      .data!
-                                                                      .docs[
-                                                                          index]
-                                                                      .id: false,
-                                                                  'date':
-                                                                      DateTime
-                                                                          .now(),
-                                                                  'members': [
-                                                                    firebaseApi
-                                                                        .auth
-                                                                        .currentUser!
-                                                                        .uid,
+                                                                          .uid);
+                                                                }
+                                                                likedBefore.add(
                                                                     snapshot
                                                                         .data!
                                                                         .docs[
                                                                             index]
-                                                                        .id
-                                                                  ]
-                                                                });
-                                                                filterGetx
-                                                                    .generateCard();
+                                                                        .id);
+                                                                GetStorage().write(
+                                                                    "likedBefore",
+                                                                    likedBefore);
+                                                                Get.snackbar(
+                                                                    "Beğeni Sınırı",
+                                                                    "Günde sadece bir popüler duo beğenebilirsiniz.");
+                                                                QuerySnapshot<
+                                                                    Map<String,
+                                                                        dynamic>> data = await firebaseApi
+                                                                    .firestore
+                                                                    .collection(
+                                                                        'Pairs')
+                                                                    .where('to',
+                                                                        isEqualTo: firebaseApi
+                                                                            .auth
+                                                                            .currentUser!
+                                                                            .uid)
+                                                                    .where(
+                                                                        'from',
+                                                                        isEqualTo: snapshot
+                                                                            .data!
+                                                                            .docs[index]
+                                                                            .id)
+                                                                    .get();
+                                                                if (data.docs
+                                                                    .isNotEmpty) {
+                                                                  await firebaseApi
+                                                                      .firestore
+                                                                      .collection(
+                                                                          'Users')
+                                                                      .doc(
+                                                                        snapshot
+                                                                            .data!
+                                                                            .docs[index]
+                                                                            .id,
+                                                                      )
+                                                                      .update({
+                                                                    'ids': FieldValue
+                                                                        .arrayUnion([
+                                                                      firebaseApi
+                                                                          .auth
+                                                                          .currentUser!
+                                                                          .uid
+                                                                    ])
+                                                                  });
+                                                                  //eslesdin
+                                                                  await firebaseApi
+                                                                      .firestore
+                                                                      .collection(
+                                                                          'Pairs')
+                                                                      .doc(data
+                                                                          .docs
+                                                                          .first
+                                                                          .id)
+                                                                      .update({
+                                                                    'paired':
+                                                                        true
+                                                                  });
+                                                                  filterGetx
+                                                                      .generateCard();
+                                                                  Get.to(
+                                                                      () =>
+                                                                          Paired(
+                                                                            name:
+                                                                                snapshot.data!.docs[index].data()['name'],
+                                                                            id: snapshot.data!.docs[index].id,
+                                                                            avatar:
+                                                                                snapshot.data!.docs[index].data()['avatar'],
+                                                                            avatarIsAsset:
+                                                                                snapshot.data!.docs[index].data()['avatarIsAsset'],
+                                                                            age:
+                                                                                snapshot.data!.docs[index].data()['age'],
+                                                                            pairId:
+                                                                                data.docs.first.id,
+                                                                          ),
+                                                                      transition:
+                                                                          Transition
+                                                                              .noTransition);
+                                                                  //Get navigate
+                                                                } else {
+                                                                  await firebaseApi
+                                                                      .firestore
+                                                                      .collection(
+                                                                          'Users')
+                                                                      .doc(
+                                                                        snapshot
+                                                                            .data!
+                                                                            .docs[index]
+                                                                            .id,
+                                                                      )
+                                                                      .update({
+                                                                    'ids': FieldValue
+                                                                        .arrayUnion([
+                                                                      firebaseApi
+                                                                          .auth
+                                                                          .currentUser!
+                                                                          .uid
+                                                                    ])
+                                                                  });
+                                                                  //ilk tiklama
+                                                                  await firebaseApi
+                                                                      .firestore
+                                                                      .collection(
+                                                                          'Pairs')
+                                                                      .add({
+                                                                    'paired':
+                                                                        false,
+                                                                    'visible':
+                                                                        false,
+                                                                    'to': snapshot
+                                                                        .data!
+                                                                        .docs[
+                                                                            index]
+                                                                        .id,
+                                                                    'from': firebaseApi
+                                                                        .auth
+                                                                        .currentUser!
+                                                                        .uid,
+                                                                    'hasMessage':
+                                                                        false,
+                                                                    'lastMessage':
+                                                                        '',
+                                                                    firebaseApi
+                                                                        .auth
+                                                                        .currentUser!
+                                                                        .uid: false,
+                                                                    snapshot
+                                                                        .data!
+                                                                        .docs[
+                                                                            index]
+                                                                        .id: false,
+                                                                    'date':
+                                                                        DateTime
+                                                                            .now(),
+                                                                    'members': [
+                                                                      firebaseApi
+                                                                          .auth
+                                                                          .currentUser!
+                                                                          .uid,
+                                                                      snapshot
+                                                                          .data!
+                                                                          .docs[
+                                                                              index]
+                                                                          .id
+                                                                    ]
+                                                                  });
+                                                                  filterGetx
+                                                                      .generateCard();
+                                                                }
                                                               }
                                                             },
                                                             child: CircleAvatar(
@@ -1911,7 +1913,7 @@ class _MessagesState extends State<Messages> {
                             : Center(
                                 child: Text('Tekrar yine gelin',
                                     style: GoogleFonts.roboto(
-                                        fontSize: 40,
+                                        fontSize: 25,
                                         fontWeight: FontWeight.bold)),
                               );
                       }),

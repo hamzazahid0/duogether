@@ -22,9 +22,8 @@ class _FilterPageState extends State<FilterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
+      backgroundColor: Get.isDarkMode ? Colors.black : Colors.white,
       appBar: AppBar(
-        leading: Container(),
         title: Text(
           'Filtreler',
           style: GoogleFonts.roboto(
@@ -37,26 +36,25 @@ class _FilterPageState extends State<FilterPage> {
         centerTitle: true,
         backgroundColor: context.isDarkMode ? Colors.grey[900] : Colors.white,
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
+      body: Center(
+        child: Container(
+          width: Get.width * 0.85,
+          height: Get.height,
+          child: Column(
+            children: [
+              Expanded(
+                flex: 4,
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: 40,
-                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Yaş aralığı',
                           style: GoogleFonts.roboto(
-                              fontSize: 30, fontWeight: FontWeight.w500),
+                              fontSize: 22, fontWeight: FontWeight.w500),
                         ),
                       ),
                       Obx(
@@ -88,15 +86,13 @@ class _FilterPageState extends State<FilterPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 30,
-                      ),
+                      const SizedBox(height: 5),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Cinsiyet',
                           style: GoogleFonts.roboto(
-                              fontSize: 30, fontWeight: FontWeight.w500),
+                              fontSize: 22, fontWeight: FontWeight.w500),
                         ),
                       ),
                       Obx(
@@ -116,10 +112,11 @@ class _FilterPageState extends State<FilterPage> {
                                         padding: const EdgeInsets.all(5),
                                         child: AutoSizeText(
                                           'Kadın',
-                                          minFontSize: 18,
+                                          minFontSize: 14,
                                           maxLines: 2,
                                           textAlign: TextAlign.center,
                                           style: GoogleFonts.roboto(
+                                              fontSize: 16,
                                               color: filterGetx.sex.value == 'f'
                                                   ? Colors.white
                                                   : Colors.black),
@@ -136,7 +133,7 @@ class _FilterPageState extends State<FilterPage> {
                                 ),
                                 flex: 1,
                               ),
-                              Container(
+                              SizedBox(
                                 width: 5,
                               ),
                               Flexible(
@@ -153,9 +150,10 @@ class _FilterPageState extends State<FilterPage> {
                                         child: AutoSizeText(
                                           'Herkes',
                                           maxLines: 2,
-                                          minFontSize: 16,
+                                          minFontSize: 14,
                                           textAlign: TextAlign.center,
                                           style: GoogleFonts.roboto(
+                                              fontSize: 16,
                                               color: filterGetx.sex.value == 'n'
                                                   ? Colors.white
                                                   : Colors.black),
@@ -172,7 +170,7 @@ class _FilterPageState extends State<FilterPage> {
                                 ),
                                 flex: 1,
                               ),
-                              Container(
+                              SizedBox(
                                 width: 5,
                               ),
                               Flexible(
@@ -189,9 +187,10 @@ class _FilterPageState extends State<FilterPage> {
                                         child: AutoSizeText(
                                           'Diğer',
                                           maxLines: 2,
-                                          minFontSize: 16,
+                                          minFontSize: 14,
                                           textAlign: TextAlign.center,
                                           style: GoogleFonts.roboto(
+                                              fontSize: 16,
                                               color: filterGetx.sex.value == 'o'
                                                   ? Colors.white
                                                   : Colors.black),
@@ -208,9 +207,7 @@ class _FilterPageState extends State<FilterPage> {
                                 ),
                                 flex: 1,
                               ),
-                              Container(
-                                width: 5,
-                              ),
+                              const SizedBox(width: 5),
                               Flexible(
                                 child: GestureDetector(
                                   onTap: () {
@@ -225,9 +222,10 @@ class _FilterPageState extends State<FilterPage> {
                                         child: AutoSizeText(
                                           'Erkek',
                                           maxLines: 2,
-                                          minFontSize: 18,
+                                          minFontSize: 14,
                                           textAlign: TextAlign.center,
                                           style: GoogleFonts.roboto(
+                                              fontSize: 16,
                                               color: filterGetx.sex.value == 'm'
                                                   ? Colors.white
                                                   : Colors.black),
@@ -255,15 +253,13 @@ class _FilterPageState extends State<FilterPage> {
                               borderRadius: BorderRadius.circular(20)),
                         ),
                       ),
-                      SizedBox(
-                        height: 30,
-                      ),
+                      const SizedBox(height: 5),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Oyunlar',
                           style: GoogleFonts.roboto(
-                              fontSize: 30, fontWeight: FontWeight.w500),
+                              fontSize: 22, fontWeight: FontWeight.w500),
                         ),
                       ),
                       Obx(
@@ -295,9 +291,7 @@ class _FilterPageState extends State<FilterPage> {
                                               : Colors.grey[200],
                                           child: Row(
                                             children: [
-                                              SizedBox(
-                                                width: 10,
-                                              ),
+                                              const SizedBox(width: 10),
                                               TextButton(
                                                   onPressed: () {
                                                     Get.back();
@@ -356,7 +350,7 @@ class _FilterPageState extends State<FilterPage> {
                                                                         'Oyun eklenmedi',
                                                                         style: GoogleFonts.roboto(
                                                                             fontSize:
-                                                                                30,
+                                                                                25,
                                                                             color: context.isDarkMode
                                                                                 ? Colors.white
                                                                                 : Colors.black),
@@ -461,9 +455,8 @@ class _FilterPageState extends State<FilterPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 15),
+                                SizedBox(
+                                  height: 45,
                                   child: Row(
                                     children: [
                                       SizedBox(
@@ -476,12 +469,12 @@ class _FilterPageState extends State<FilterPage> {
                                         child: Text(
                                           filterGetx.game.value,
                                           style: TextStyle(
-                                              fontSize: 22,
+                                              fontSize: 18,
                                               fontWeight: FontWeight.w600,
                                               color: context.isDarkMode
                                                   ? Colors.white
                                                   : Colors.black),
-                                          overflow: TextOverflow.visible,
+                                          overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
                                         ),
                                       )
@@ -489,18 +482,20 @@ class _FilterPageState extends State<FilterPage> {
                                   ),
                                 ),
                                 filterGetx.game.value == 'Oyun seçin'
-                                    ? Container()
+                                    ? const SizedBox()
                                     : Align(
                                         alignment: Alignment.centerRight,
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 10),
                                           child: IconButton(
-                                              onPressed: () {
-                                                filterGetx.game.value =
-                                                    'Oyun seçin';
-                                              },
-                                              icon: Icon(Icons.cancel)),
+                                            onPressed: () {
+                                              filterGetx.game.value =
+                                                  'Oyun seçin';
+                                            },
+                                            icon: Icon(Icons.cancel),
+                                            iconSize: 22,
+                                          ),
                                         ),
                                       )
                               ],
@@ -508,15 +503,13 @@ class _FilterPageState extends State<FilterPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 30,
-                      ),
+                      const SizedBox(height: 5),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Oyun içi iletişim',
                           style: GoogleFonts.roboto(
-                              fontSize: 30, fontWeight: FontWeight.w500),
+                              fontSize: 22, fontWeight: FontWeight.w500),
                         ),
                       ),
                       Obx(
@@ -524,6 +517,7 @@ class _FilterPageState extends State<FilterPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
+                              padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                   color: filterGetx.headphone.value &&
                                           filterGetx.headpressed.value
@@ -532,47 +526,42 @@ class _FilterPageState extends State<FilterPage> {
                                           ? Colors.grey[900]
                                           : Colors.grey[200],
                                   borderRadius: BorderRadius.circular(20)),
-                              child: Padding(
-                                padding: EdgeInsets.all(12),
-                                child: InkWell(
-                                  onTap: () {
-                                    if (!filterGetx.headpressed.value) {
+                              child: InkWell(
+                                onTap: () {
+                                  if (!filterGetx.headpressed.value) {
+                                    filterGetx.headpressed.value = true;
+                                    filterGetx.filtered.value = true;
+                                    filterGetx.headphone.value = true;
+                                  } else {
+                                    if (filterGetx.headphone.value) {
+                                      filterGetx.headpressed.value = false;
+                                      filterGetx.filtered.value = false;
+                                    } else {
                                       filterGetx.headpressed.value = true;
                                       filterGetx.filtered.value = true;
                                       filterGetx.headphone.value = true;
-                                    } else {
-                                      if (filterGetx.headphone.value) {
-                                        filterGetx.headpressed.value = false;
-                                        filterGetx.filtered.value = false;
-                                      } else {
-                                        filterGetx.headpressed.value = true;
-                                        filterGetx.filtered.value = true;
-                                        filterGetx.headphone.value = true;
-                                      }
                                     }
-                                  },
-                                  child: SizedBox(
-                                    width: 120,
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 40,
-                                          width: 40,
-                                          child:
-                                              Image.asset('assets/headset.png'),
-                                        ),
-                                        SizedBox(
-                                          height: 3,
-                                        ),
-                                        Text(
-                                          'Sesli',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.roboto(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      ],
-                                    ),
+                                  }
+                                },
+                                child: SizedBox(
+                                  width: 120,
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 40,
+                                        width: 40,
+                                        child:
+                                            Image.asset('assets/headset.png'),
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        'Sesli',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.roboto(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
@@ -595,7 +584,7 @@ class _FilterPageState extends State<FilterPage> {
                                           : Colors.grey[200],
                                   borderRadius: BorderRadius.circular(20)),
                               child: Padding(
-                                padding: EdgeInsets.all(12),
+                                padding: EdgeInsets.all(10),
                                 child: InkWell(
                                   onTap: () {
                                     if (!filterGetx.headpressed.value) {
@@ -629,7 +618,7 @@ class _FilterPageState extends State<FilterPage> {
                                           'Mesajlaşma',
                                           textAlign: TextAlign.center,
                                           style: GoogleFonts.roboto(
-                                              fontSize: 20,
+                                              fontSize: 18,
                                               fontWeight: FontWeight.bold),
                                         )
                                       ],
@@ -645,61 +634,63 @@ class _FilterPageState extends State<FilterPage> {
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Material(
-                color: Colors.green,
-                borderRadius: BorderRadius.circular(15),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(15),
-                  onTap: () async {
-                    await filterGetx.generateCard();
-                    if (widget.controller.state != null) {
-                      widget.controller.state!.reset(cards: filterGetx.cards);
-                    }
-                    Get.back();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Uygula',
-                          style: GoogleFonts.roboto(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        )
-                      ],
+              const SizedBox(height: 5),
+              Expanded(
+                child: Column(
+                  children: [
+                    Material(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(15),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(15),
+                        onTap: () {
+                          filterGetx.generateCard().then((value) {
+                            if (widget.controller.state != null) {
+                              widget.controller.state!
+                                  .reset(cards: filterGetx.cards.value);
+
+                              Get.back();
+                            }
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Uygula',
+                                style: GoogleFonts.roboto(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 5),
+                    TextButton(
+                        onPressed: () {
+                          filterGetx.resetFilter();
+                          filterGetx.filtered.value = false;
+                        },
+                        style:
+                            ButtonStyle(splashFactory: NoSplash.splashFactory),
+                        child: Text(
+                          'Filtreleri sıfırla',
+                          style: TextStyle(
+                              fontSize: 17,
+                              color: context.isDarkMode
+                                  ? Colors.white
+                                  : Colors.black),
+                        )),
+                  ],
                 ),
               ),
-            ),
-            SizedBox(
-              height: 7,
-            ),
-            TextButton(
-                onPressed: () {
-                  filterGetx.resetFilter();
-                  filterGetx.filtered.value = false;
-                },
-                style: ButtonStyle(splashFactory: NoSplash.splashFactory),
-                child: Text(
-                  'Filtreleri sıfırla',
-                  style: TextStyle(
-                      fontSize: 17,
-                      color: context.isDarkMode ? Colors.white : Colors.black),
-                )),
-            SizedBox(
-              height: 10,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

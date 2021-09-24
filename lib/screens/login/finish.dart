@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gamehub/api/firebase.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:gamehub/getx/cardsGetx.dart';
 import 'package:gamehub/utils/utils.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,6 +22,7 @@ class FinishProfile extends StatefulWidget {
 class _FinishProfileState extends State<FinishProfile> {
   FirebaseApi firebaseApi = Get.find();
   TextEditingController nameContoller = TextEditingController();
+  CardsGetx cardsGetx = Get.find();
   @override
   Widget build(BuildContext context) {
     nameContoller.text = firebaseApi.name.value;
@@ -464,13 +466,13 @@ class _FinishProfileState extends State<FinishProfile> {
                                             return Padding(
                                               padding: const EdgeInsets.all(5),
                                               child: GestureDetector(
-                                                onTap: () async {
+                                                onTap: () {
                                                   firebaseApi.avatarIsAsset
                                                       .value = true;
                                                   firebaseApi.avatar.value =
                                                       'assets/avatars/${Utils.avatars[index]}';
                                                   Get.back();
-                                                },
+                                                }, //
                                                 child: Container(
                                                   height: 50,
                                                   width: 50,
@@ -546,26 +548,12 @@ class _FinishProfileState extends State<FinishProfile> {
                                                   : GestureDetector(
                                                       onTap: () {
                                                         //reklam
-                                                        RewardedAd.load(
-                                                            adUnitId:
-                                                                Utils.ad_id,
-                                                            request:
-                                                                AdRequest(),
-                                                            rewardedAdLoadCallback:
-                                                                RewardedAdLoadCallback(
-                                                                    onAdLoaded:
-                                                                        (add) {
-                                                                      add.show(onUserEarnedReward:
-                                                                          (add,
-                                                                              item) {
-                                                                        //give reward
-                                                                        firebaseApi
-                                                                            .twoLevelAvatar
-                                                                            .value = true;
-                                                                      });
-                                                                    },
-                                                                    onAdFailedToLoad:
-                                                                        (add) {}));
+                                                        firebaseApi.showAd(
+                                                            cardsGetx, () {
+                                                          firebaseApi
+                                                              .twoLevelAvatar
+                                                              .value = true;
+                                                        });
                                                       },
                                                       child: Center(
                                                         child: Material(
@@ -631,7 +619,7 @@ class _FinishProfileState extends State<FinishProfile> {
                                                           const EdgeInsets.all(
                                                               5),
                                                       child: GestureDetector(
-                                                        onTap: () async {
+                                                        onTap: () {
                                                           firebaseApi
                                                               .avatarIsAsset
                                                               .value = true;
@@ -1253,7 +1241,7 @@ class _FinishProfileState extends State<FinishProfile> {
                         children: [
                           Text(firebaseApi.date.value,
                               style: GoogleFonts.roboto(
-                                  fontSize: 25, fontWeight: FontWeight.bold)),
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
                           SizedBox(
                             width: 10,
                           ),
@@ -1301,169 +1289,160 @@ class _FinishProfileState extends State<FinishProfile> {
                 SizedBox(
                   height: 10,
                 ),
+
                 Text(
                   'Cinsiyet',
                   style: GoogleFonts.roboto(
                       fontSize: 25, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
-                  height: 5,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Container(
-                    child: Row(
-                      children: [
-                        Flexible(
-                          child: GestureDetector(
-                            onTap: () {
-                              firebaseApi.sex.value = 'f';
-                              firebaseApi.chechToQuestion();
-                            },
-                            child: Container(
-                              height: 50,
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: AutoSizeText(
-                                    'Kadın',
-                                    minFontSize: 18,
-                                    maxLines: 2,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.roboto(
-                                        color: firebaseApi.sex.value == 'f'
-                                            ? Colors.white
-                                            : Colors.black),
-                                  ),
+                const SizedBox(height: 5),
+                Container(
+                  width: Get.width * 0.92,
+                  height: 55,
+                  decoration: BoxDecoration(
+                      color: context.isDarkMode
+                          ? Colors.grey[600]
+                          : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: () {
+                            firebaseApi.sex.value = 'f';
+                            firebaseApi.chechToQuestion();
+                          },
+                          child: Container(
+                            height: 50,
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: AutoSizeText(
+                                  'Kadın',
+                                  minFontSize: 12,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 14,
+                                      color: firebaseApi.sex.value == 'f'
+                                          ? Colors.white
+                                          : Colors.black),
                                 ),
                               ),
-                              decoration: BoxDecoration(
-                                  color: firebaseApi.sex.value == 'f'
-                                      ? Colors.green
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(20)),
                             ),
-                          ),
-                          flex: 1,
-                        ),
-                        Container(
-                          width: 5,
-                        ),
-                        Flexible(
-                          child: GestureDetector(
-                            onTap: () {
-                              firebaseApi.sex.value = 'n';
-                              firebaseApi.chechToQuestion();
-                            },
-                            child: Container(
-                              height: 50,
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: AutoSizeText(
-                                    'Belirtmek istemiyorum',
-                                    maxLines: 3,
-                                    minFontSize: 13,
-                                    overflow: TextOverflow.visible,
-                                    wrapWords: true,
-                                    softWrap: true,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.roboto(
-                                        color: firebaseApi.sex.value == 'n'
-                                            ? Colors.white
-                                            : Colors.black),
-                                  ),
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: firebaseApi.sex.value == 'n'
+                            decoration: BoxDecoration(
+                                color: firebaseApi.sex.value == 'f'
                                     ? Colors.green
                                     : Colors.transparent,
-                              ),
-                            ),
+                                borderRadius: BorderRadius.circular(20)),
                           ),
-                          flex: 1,
                         ),
-                        Container(
-                          width: 5,
-                        ),
-                        Flexible(
-                          child: GestureDetector(
-                            onTap: () {
-                              firebaseApi.sex.value = 'o';
-                              firebaseApi.chechToQuestion();
-                            },
-                            child: Container(
-                              height: 50,
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: AutoSizeText(
-                                    'Diğer',
-                                    maxLines: 2,
-                                    minFontSize: 18,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.roboto(
-                                        color: firebaseApi.sex.value == 'o'
-                                            ? Colors.white
-                                            : Colors.black),
-                                  ),
+                        flex: 1,
+                      ),
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: () {
+                            firebaseApi.sex.value = 'n';
+                            firebaseApi.chechToQuestion();
+                          },
+                          child: Container(
+                            height: 50,
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: AutoSizeText(
+                                  'Belirtmek istemiyorum',
+                                  minFontSize: 12,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.visible,
+                                  wrapWords: true,
+                                  softWrap: true,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 14,
+                                      color: firebaseApi.sex.value == 'n'
+                                          ? Colors.white
+                                          : Colors.black),
                                 ),
                               ),
-                              decoration: BoxDecoration(
-                                  color: firebaseApi.sex.value == 'o'
-                                      ? Colors.green
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(20)),
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: firebaseApi.sex.value == 'n'
+                                  ? Colors.green
+                                  : Colors.transparent,
                             ),
                           ),
-                          flex: 1,
                         ),
-                        Container(
-                          width: 5,
-                        ),
-                        Flexible(
-                          child: GestureDetector(
-                            onTap: () {
-                              firebaseApi.sex.value = 'm';
-                              firebaseApi.chechToQuestion();
-                            },
-                            child: Container(
-                              height: 50,
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: AutoSizeText(
-                                    'Erkek',
-                                    maxLines: 2,
-                                    minFontSize: 18,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.roboto(
-                                        color: firebaseApi.sex.value == 'm'
-                                            ? Colors.white
-                                            : Colors.black),
-                                  ),
+                        flex: 1,
+                      ),
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: () {
+                            firebaseApi.sex.value = 'o';
+                            firebaseApi.chechToQuestion();
+                          },
+                          child: Container(
+                            height: 50,
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: AutoSizeText(
+                                  'Diğer',
+                                  maxLines: 1,
+                                  minFontSize: 12,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 14,
+                                      color: firebaseApi.sex.value == 'o'
+                                          ? Colors.white
+                                          : Colors.black),
                                 ),
                               ),
-                              decoration: BoxDecoration(
-                                  color: firebaseApi.sex.value == 'm'
-                                      ? Colors.green
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(20)),
                             ),
+                            decoration: BoxDecoration(
+                                color: firebaseApi.sex.value == 'o'
+                                    ? Colors.green
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20)),
                           ),
-                          flex: 1,
                         ),
-                      ],
-                    ),
-                    width: double.maxFinite,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        color: context.isDarkMode
-                            ? Colors.grey[600]
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(20)),
+                        flex: 1,
+                      ),
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: () {
+                            firebaseApi.sex.value = 'm';
+                            firebaseApi.chechToQuestion();
+                          },
+                          child: Container(
+                            height: 50,
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: AutoSizeText(
+                                  'Erkek',
+                                  maxLines: 2,
+                                  minFontSize: 12,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 14,
+                                      color: firebaseApi.sex.value == 'm'
+                                          ? Colors.white
+                                          : Colors.black),
+                                ),
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                                color: firebaseApi.sex.value == 'm'
+                                    ? Colors.green
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
+                        ),
+                        flex: 1,
+                      ),
+                    ],
                   ),
                 ),
                 // SizedBox(
@@ -1836,9 +1815,7 @@ class _FinishProfileState extends State<FinishProfile> {
                                   'İleri',
                                   style: TextStyle(fontSize: 20),
                                 ),
-                                SizedBox(
-                                  width: 5,
-                                ),
+                                const SizedBox(width: 5),
                                 Icon(Icons.arrow_forward_ios_rounded),
                               ],
                             ),
@@ -1848,6 +1825,7 @@ class _FinishProfileState extends State<FinishProfile> {
                     )
                   ],
                 ),
+                const SizedBox(height: 10),
                 firebaseApi.avatar.value == 'assets/user.png'
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -1864,7 +1842,7 @@ class _FinishProfileState extends State<FinishProfile> {
                           ),
                           Text('Avatar seçilmedi',
                               style: GoogleFonts.roboto(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red[800])),
                           SizedBox(
@@ -1872,7 +1850,7 @@ class _FinishProfileState extends State<FinishProfile> {
                           ),
                         ],
                       )
-                    : Container(),
+                    : const SizedBox(),
                 firebaseApi.sex.value == 'null'
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -1889,7 +1867,7 @@ class _FinishProfileState extends State<FinishProfile> {
                           ),
                           Text('Cinsiyet seçilmedi',
                               style: GoogleFonts.roboto(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red[800])),
                           SizedBox(
@@ -1897,7 +1875,7 @@ class _FinishProfileState extends State<FinishProfile> {
                           ),
                         ],
                       )
-                    : Container(),
+                    : const SizedBox(),
                 firebaseApi.date.value == 'Tarih seçin'
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -1914,7 +1892,7 @@ class _FinishProfileState extends State<FinishProfile> {
                           ),
                           Text('Tarih seçilmedi',
                               style: GoogleFonts.roboto(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red[800])),
                           SizedBox(
@@ -1922,7 +1900,7 @@ class _FinishProfileState extends State<FinishProfile> {
                           ),
                         ],
                       )
-                    : Container(),
+                    : const SizedBox(),
                 firebaseApi.name.value.isEmpty
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -1939,7 +1917,7 @@ class _FinishProfileState extends State<FinishProfile> {
                           ),
                           Text('Lütfen isim girin',
                               style: GoogleFonts.roboto(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red[800])),
                           SizedBox(
@@ -1963,7 +1941,7 @@ class _FinishProfileState extends State<FinishProfile> {
                               ),
                               Text('İsminiz en az 3 karakterden oluşmalı',
                                   style: GoogleFonts.roboto(
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.red[800])),
                               SizedBox(
@@ -1986,9 +1964,9 @@ class _FinishProfileState extends State<FinishProfile> {
                                     width: 5,
                                   ),
                                   Text(
-                                      'Isminiz en fazla 12 karakterden oluşmalı',
+                                      'İsminiz en fazla 12 karakterden oluşmalı',
                                       style: GoogleFonts.roboto(
-                                          fontSize: 18,
+                                          fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.red[800])),
                                   SizedBox(
@@ -1996,7 +1974,7 @@ class _FinishProfileState extends State<FinishProfile> {
                                   ),
                                 ],
                               )
-                            : Container(),
+                            : const SizedBox(),
                 // SizedBox(
                 //   height: 5,
                 // ),
@@ -2046,7 +2024,7 @@ class _FinishProfileState extends State<FinishProfile> {
                 //       )
                 //     : Container(),
                 SizedBox(
-                  height: 20,
+                  height: 10,
                 )
               ],
             ),

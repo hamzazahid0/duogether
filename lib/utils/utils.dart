@@ -21,12 +21,14 @@ class Utils {
   //ca-app-pub-1891862173368472~4151425749 - Admob id
 
 //Real id
-  // static const String banner_id = 'ca-app-pub-1891862173368472/7027380806';
-  static const String ad_id = 'ca-app-pub-1891862173368472/8037210142';
+  static const String banner_id = 'ca-app-pub-1891862173368472/7027380806';
+  static const String ad_id =
+      'ca-app-pub-1891862173368472/8037210142'; //reward ad id
 
 //sample id
-  static const String banner_id = 'ca-app-pub-3940256099942544/6300978111';
-
+  // static const String banner_id = 'ca-app-pub-3940256099942544/6300978111';
+// * discord linki
+  static const discordLink = "https://discord.gg/a6NbHSh4b7";
   static const String token_Brawl =
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjA4Yzc1N2U4LTYwZjMtNDA4My1hZTQ3LTExMjFkYTIxNDU0MSIsImlhdCI6MTYyNTQ4MjE2OCwic3ViIjoiZGV2ZWxvcGVyLzFlNDM0YmFhLTQ0NjctMjRmMC1hMmNmLTcwZDU4NTgxZjBiMCIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0cyI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsiY2lkcnMiOlsiMzcuMjYuMjUuNzIiXSwidHlwZSI6ImNsaWVudCJ9XX0.gBZD8ym_09z9cOmn_EM9UoSmCKRRh4KOIuZlFP9a1GaXGJ3hyxXpDVNcu6eF7HvaCh3JUTLFs0oYAbgK574KZA';
 
@@ -168,13 +170,13 @@ class Utils {
 
   static const List<Map<String, String>> rosettes = [
     beslevelrozeti,
-    aktifsaatleriniduzenleme,
     ilkeslesme,
     oyunekleme,
     populeruye,
     resimekleme,
     senincizginyapma,
-    sosyalmedyapaylasma
+    sosyalmedyapaylasma,
+    bestduo,
   ];
 
   static const Map<String, String> beslevelrozeti = {
@@ -182,11 +184,7 @@ class Utils {
     'detail': "Sosyal medya hesabını profiline ekle",
     'name': 'Arkadaş Canlısı'
   };
-  static const Map<String, String> aktifsaatleriniduzenleme = {
-    'photo': 'aktiv.png',
-    'detail': 'En az 1 oyun için deneyim bilgilerini gir',
-    'name': 'Yılların oyuncusu'
-  };
+
   static const Map<String, String> ilkeslesme = {
     'photo': 'ilk-eslesme.png',
     'detail': 'İlk eşleşme. İlk duonu bul',
@@ -216,6 +214,11 @@ class Utils {
     'photo': 'sosyal-medya-paylasma.png',
     'detail': 'Sosyal Medyada bizi paylaş',
     'name': 'Sosyal Medya Fenomeni'
+  };
+  static const Map<String, String> bestduo = {
+    'photo': 'star-us3.png',
+    'detail': "Bizi market üzerinde puanla",
+    'name': 'Best Duo'
   };
 
   static const String noSuchUser =
@@ -315,6 +318,8 @@ class Utils {
       print(sameDay);
       if (nextDay && !sameDay) {
         print('oldu');
+        GetStorage().write("likeCount", 1);
+        GetStorage().write("boughtExtra", false);
         GetStorage().write('date', DateTime.now().toIso8601String());
         FirebaseFirestore.instance
             .collection('Users')
@@ -424,7 +429,7 @@ class Utils {
 
   int getLevel(int exp) {
     int level = 1;
-    if (exp > 2310) {
+    if (exp > 899) {
       level = 10;
     } else if (exp > 799) {
       level = 9;

@@ -17,6 +17,7 @@ import 'package:gamehub/screens/profile.dart';
 import 'package:gamehub/utils/utils.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get_storage/get_storage.dart';
 
 class Main extends StatefulWidget {
   final bool first;
@@ -36,6 +37,7 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     getReady();
+
     getToken();
     reloadAccounts();
     listenNotifications();
@@ -205,6 +207,8 @@ class _MainState extends State<Main> {
   }
 
   void getReady() async {
+    print("ikinci yüklenme");
+
     bool more = await Utils().checkStorage();
     var data = await firebaseApi.firestore
         .collection('Users')
@@ -213,13 +217,17 @@ class _MainState extends State<Main> {
     cardsGetx.limit.value = data.data()!['limit'];
     cardsGetx.more.value = more;
 
-    filterGetx.generateCard();
+    if (filterGetx.cards.isEmpty) {
+      filterGetx.generateCard();
+    }
   }
 
   void listenNotifications() {
-    FirebaseMessaging.instance.getInitialMessage().then((value) {
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? value) {
       if (value != null) {
-        if (value.data['type'] == 'message') {
+        if (value.data['type'] == 'message' ||
+            value.data["type"] == "pair" ||
+            value.data["type"] == "photo") {
           bool avatarIsAsset = true;
 
           if (value.data['avatarIsAsset'] != "true") {
@@ -239,13 +247,21 @@ class _MainState extends State<Main> {
     });
 
     FirebaseMessaging.onMessage.listen((event) {
-      if (event.data['type'] == 'message') {
+      if (event.data['type'] == 'message' ||
+          event.data["type"] == "pair" ||
+          event.data["type"] == "photo") {
         bool avatarIsAsset = true;
 
         if (event.data['avatarIsAsset'] != "true") {
           avatarIsAsset = false;
         }
+        print(event.data['name']);
+        print(event.data['avatar']);
+        print(event.data['pairId']);
+        print(event.data['id']);
+
         if (firebaseApi.pairId != event.data['pairId']) {
+          print("girdi");
           Get.snackbar(event.notification!.title!, event.notification!.body!,
               backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
               colorText: context.isDarkMode ? Colors.white : Colors.black,
@@ -265,7 +281,11 @@ class _MainState extends State<Main> {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      if (event.data['type'] == 'message') {
+      print("uygulama açık");
+
+      if (event.data['type'] == 'message' ||
+          event.data["type"] == "pair" ||
+          event.data["type"] == "photo") {
         bool avatarIsAsset = true;
 
         if (event.data['avatarIsAsset'] != "true") {
@@ -273,6 +293,11 @@ class _MainState extends State<Main> {
         }
         if (firebaseApi.pairId != event.data['pairId']) {
           firebaseApi.pairId = event.data['pairId'];
+          print(event.data['pairId'] + " name : " + event.data['name']);
+          print(firebaseApi.userProfile.value.userId);
+          print(event.data['avatar']);
+          print(event.data['pairId']);
+
           Get.to(
               () => Message(
                   name: event.data['name'],

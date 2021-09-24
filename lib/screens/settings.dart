@@ -12,11 +12,14 @@ import 'package:gamehub/screens/questions.dart';
 import 'package:gamehub/screens/terms.dart';
 import 'package:gamehub/utils/utils.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:share/share.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'newLevel.dart';
+
+final InAppReview inAppReview = InAppReview.instance;
 
 class Settings extends StatefulWidget {
   @override
@@ -362,17 +365,21 @@ class _SettingsState extends State<Settings> {
                               height: 10,
                             ),
                             Material(
-                              color: context.isDarkMode
+                              color: Get.isDarkMode
                                   ? Colors.grey[900]
                                   : Colors.grey[200],
                               borderRadius: BorderRadius.circular(15),
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(15),
                                 onTap: () async {
-                                  if (context.isDarkMode) {
+                                  bool isDarkMode =
+                                      GetStorage().read("isDark") ?? false;
+                                  if (isDarkMode) {
                                     Get.changeTheme(ThemeData.light());
+                                    GetStorage().write("isDark", false);
                                   } else {
                                     Get.changeTheme(ThemeData.dark());
+                                    GetStorage().write("isDark", true);
                                   }
                                   var data = await firebaseApi.firestore
                                       .collection('Users')
@@ -406,11 +413,19 @@ class _SettingsState extends State<Settings> {
                                           value: context.isDarkMode,
                                           activeColor: Colors.red,
                                           onChanged: (b) async {
-                                            if (context.isDarkMode) {
+                                            bool isDarkMode =
+                                                GetStorage().read("isDark") ??
+                                                    false;
+
+                                            if (isDarkMode) {
                                               Get.changeTheme(
                                                   ThemeData.light());
+                                              GetStorage()
+                                                  .write("isDark", false);
                                             } else {
                                               Get.changeTheme(ThemeData.dark());
+                                              GetStorage()
+                                                  .write("isDark", true);
                                             }
                                             var data = await firebaseApi
                                                 .firestore
@@ -895,10 +910,83 @@ class _SettingsState extends State<Settings> {
                                       child: InkWell(
                                         borderRadius: BorderRadius.circular(15),
                                         onTap: () async {
-                                          if (await InAppReview.instance
-                                              .isAvailable()) {
-                                            await InAppReview.instance
-                                                .requestReview();
+                                          if (await inAppReview.isAvailable()) {
+                                            // await inAppReview.requestReview();
+                                            inAppReview
+                                                .openStoreListing()
+                                                .then((value) {
+                                              firebaseApi.firestore
+                                                  .collection('Users')
+                                                  .doc(firebaseApi
+                                                      .auth.currentUser!.uid)
+                                                  .collection('Rosettes')
+                                                  .where('name',
+                                                      isEqualTo: Utils
+                                                          .bestduo['name']!)
+                                                  .get()
+                                                  .then((value) async {
+                                                if (value.docs.isEmpty) {
+                                                  Get.snackbar(
+                                                      'Başarı kazandın',
+                                                      Utils.bestduo['name']!,
+                                                      icon: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 5),
+                                                        child: Icon(
+                                                          Icons
+                                                              .emoji_events_outlined,
+                                                          size: 35,
+                                                        ),
+                                                      ));
+                                                  firebaseApi.firestore
+                                                      .collection('Users')
+                                                      .doc(firebaseApi.auth
+                                                          .currentUser!.uid)
+                                                      .collection('Rosettes')
+                                                      .add({
+                                                    'name':
+                                                        Utils.bestduo['name']!,
+                                                    'photo':
+                                                        Utils.bestduo['photo']!,
+                                                  });
+                                                  await firebaseApi.firestore
+                                                      .collection('Users')
+                                                      .doc(firebaseApi.auth
+                                                          .currentUser!.uid)
+                                                      .get()
+                                                      .then((value) async {
+                                                    int exp =
+                                                        value.data()!['exp'];
+                                                    int level =
+                                                        value.data()!['level'];
+                                                    int newExp = exp + 100;
+                                                    int newLevel = Utils()
+                                                        .getLevel(newExp);
+                                                    await firebaseApi.firestore
+                                                        .collection('Users')
+                                                        .doc(firebaseApi.auth
+                                                            .currentUser!.uid)
+                                                        .update(
+                                                            {'exp': newExp});
+                                                    if (level != newLevel) {
+                                                      //yeni seviyye
+                                                      await firebaseApi
+                                                          .firestore
+                                                          .collection('Users')
+                                                          .doc(firebaseApi.auth
+                                                              .currentUser!.uid)
+                                                          .update({
+                                                        'level': newLevel
+                                                      });
+                                                      Get.to(() => NewLevel(
+                                                          level: newLevel));
+                                                    }
+                                                  });
+                                                }
+                                              });
+                                            });
                                           }
                                         },
                                         child: Row(
@@ -1250,6 +1338,57 @@ class _SettingsState extends State<Settings> {
                                 ),
                               ),
                             ),
+                            //delete account
+                            const SizedBox(height: 10),
+                            Material(
+                              color: context.isDarkMode
+                                  ? Colors.grey[900]
+                                  : Colors.grey[200],
+                              borderRadius: BorderRadius.circular(15),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(15),
+                                onTap: () async {
+                                  if (GetStorage().read("signMethod") ==
+                                      "google") {
+                                    await firebaseApi.deleteGoogleAccount();
+                                  } else if (GetStorage().read("signMethod") ==
+                                      "facebook") {
+                                    await firebaseApi.deleteFBAccount();
+                                  } else if (GetStorage().read("signMethod") ==
+                                      "email") {
+                                    await firebaseApi
+                                        .deleteAccountWithEmailPass();
+                                  }else if (GetStorage().read("signMethod") ==
+                                      "apple") {
+                                    await firebaseApi
+                                        .deleteAppleAccount();
+                                  }
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 15),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.delete_forever,
+                                            color: Colors.red,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text('Hesabı Sil')
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
                             SizedBox(
                               height: 20,
                             ),
@@ -1315,9 +1454,8 @@ class _SettingsState extends State<Settings> {
                                       const EdgeInsets.symmetric(horizontal: 5),
                                   child: GestureDetector(
                                     onTap: () async {
-                                      if (await canLaunch(
-                                          'https://discord.gg/a6NbHSh4b7')) {
-                                        launch('https://discord.gg/a6NbHSh4b7');
+                                      if (await canLaunch(Utils.discordLink)) {
+                                        launch(Utils.discordLink);
                                       }
                                     },
                                     child: Image.asset(

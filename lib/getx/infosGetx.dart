@@ -16,7 +16,7 @@ class InfosGetx extends GetxController {
   var twoLevelAvatar = false.obs;
   RxList<QueryDocumentSnapshot<Map<String, dynamic>>> social =
       <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
-  List<String> words = [''];
+  var words = [''].obs;
 
   @override
   void onInit() {
@@ -37,17 +37,20 @@ class InfosGetx extends GetxController {
   // }
 
   void updateWords() {
-    words.clear();
+    words.value = [];
+
     List<String> temp = Utils.words.toList();
-    int r1 = Random().nextInt(temp.length - 1);
-    words.add(temp[r1]);
+    Random random = Random();
+    int r1 = random.nextInt(temp.length - 1);
+    words.value.add(temp[r1]);
     temp.removeAt(r1);
-    int r2 = Random().nextInt(temp.length - 1);
-    words.add(temp[r2]);
+    int r2 = random.nextInt(temp.length - 1);
+    words.value.add(temp[r2]);
     temp.removeAt(r2);
-    int r3 = Random().nextInt(temp.length - 1);
-    words.add(temp[r3]);
+    int r3 = random.nextInt(temp.length - 1);
+    words.value.add(temp[r3]);
     temp.removeAt(r3);
+    notifyChildrens();
   }
 
   void addInfos(String name, String avatar, int age, bool avatarIsAsset) async {

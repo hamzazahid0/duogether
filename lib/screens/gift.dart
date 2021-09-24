@@ -66,7 +66,9 @@ class _GiftScreenState extends State<GiftScreen> {
                                           children: [
                                             Image.asset(
                                               'assets/prize.png',
-                                              color: Get.isDarkMode?Colors.white:Colors.black,
+                                              color: Get.isDarkMode
+                                                  ? Colors.white
+                                                  : Colors.black,
                                               height: 180,
                                               width: 180,
                                             ),
@@ -351,7 +353,8 @@ class _GiftScreenState extends State<GiftScreen> {
                                                         'userID': FirebaseAuth
                                                             .instance
                                                             .currentUser!
-                                                            .uid
+                                                            .uid,
+                                                        "date": Timestamp.now(),
                                                       });
                                                     },
                                                     borderRadius:
